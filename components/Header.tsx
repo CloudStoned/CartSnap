@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ShoppingBasket, Sparkles, Volume2, VolumeX, Bell } from 'lucide-react';
+import { Sparkles, Volume2, VolumeX, Bell } from 'lucide-react';
 import { useGroceryStore } from '../store/GroceryStore';
 
 export default function Header() {
@@ -46,7 +46,6 @@ export default function Header() {
           type="button" 
           onClick={() => {
             setSoundEnabled(!soundEnabled);
-            // We use setTimeout because state update is asynchronous and we want to play sound immediately if unmutes, or use current value
             playSound('click');
           }} 
           className="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-50 transition-colors relative"

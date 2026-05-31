@@ -176,18 +176,18 @@ export default function ScanHub() {
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none snap-x h-8.5">
               {["Produce", "Dairy", "Bakery", "Pantry", "Meat", "Other"].map((cat) => (
                 <button
-                  key={cat}
-                  type="button"
-                  onClick={() => {
-                    playSound('click');
-                    setScannedCategory(cat);
-                  }}
-                  className={cn(
-                    "flex-none px-4 py-1.5 rounded-full text-xs font-bold leading-none select-none transition-all scroll-snap-align-start active:scale-95 border-0 cursor-pointer",
-                    scannedCategory === cat
-                      ? "bg-[#006e2f] text-white shadow-xs"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  )}
+                   key={cat}
+                   type="button"
+                   onClick={() => {
+                     playSound('click');
+                     setScannedCategory(cat);
+                   }}
+                   className={cn(
+                     "flex-none px-4 py-1.5 rounded-full text-xs font-bold leading-none select-none transition-all scroll-snap-align-start active:scale-95 border-0 cursor-pointer",
+                     scannedCategory === cat
+                       ? "bg-[#006e2f] text-white shadow-xs"
+                       : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                   )}
                 >
                   {cat}
                 </button>

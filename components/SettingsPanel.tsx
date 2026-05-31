@@ -65,7 +65,6 @@ export default function SettingsPanel() {
           type="button"
           onClick={() => {
             setSoundEnabled(!soundEnabled);
-            // playSound is called inside state setter or directly. Since setSoundEnabled updates state asynchronously, we can call playSound immediately.
             playSound('click');
           }}
           className={cn(
