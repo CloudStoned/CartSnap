@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Sparkles, Volume2, VolumeX, Bell } from 'lucide-react';
-import { useGroceryStore } from '../store/GroceryStore';
+import { Sparkles, Volume2, VolumeX, Bell, LogOut } from 'lucide-react';
+import { useGroceryStore } from '@/store/GroceryStore';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 export default function Header() {
   const {
@@ -14,6 +15,13 @@ export default function Header() {
     showNotificationsList,
     setShowNotificationsList
   } = useGroceryStore();
+
+  const { signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    playSound('click');
+    await signOut();
+  };
 
   return (
     <header className="sticky top-0 bg-white border-b border-indigo-50/50 px-4 sm:px-6 py-3.5 flex justify-between items-center z-20 shadow-xs">
@@ -68,6 +76,16 @@ export default function Header() {
           {showNotificationBadge && (
             <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-red-600 rounded-full ring-2 ring-white animate-bounce" />
           )}
+        </button>
+
+        {/* Sign Out Button */}
+        <button 
+          type="button" 
+          onClick={handleSignOut} 
+          className="p-1.5 sm:p-2 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50/50 transition-colors"
+          title="Sign Out"
+        >
+          <LogOut className="w-4.5 h-4.5" />
         </button>
       </div>
     </header>

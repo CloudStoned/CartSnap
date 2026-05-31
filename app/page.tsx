@@ -1,24 +1,26 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AlertCircle } from 'lucide-react';
-import { GroceryProvider, useGroceryStore } from '../store/GroceryStore';
+import { GroceryProvider, useGroceryStore } from '@/store/GroceryStore';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 // General Sub components
-import Header from '../components/Header';
-import BudgetCard from '../components/BudgetCard';
-import StatsCard from '../components/StatsCard';
-import SettingsPanel from '../components/SettingsPanel';
-import ScanHub from '../components/ScanHub';
-import BasketPanel from '../components/BasketPanel';
-import CheckoutModal from '../components/CheckoutModal';
-import CameraOverlay from '../components/CameraOverlay';
-import SuccessDialog from '../components/SuccessDialog';
-import NotificationLogs from '../components/NotificationLogs';
+import Header from '@/components/Header';
+import BudgetCard from '@/components/BudgetCard';
+import StatsCard from '@/components/StatsCard';
+import SettingsPanel from '@/components/SettingsPanel';
+import ScanHub from '@/components/ScanHub';
+import BasketPanel from '@/components/BasketPanel';
+import CheckoutModal from '@/components/CheckoutModal';
+import CameraOverlay from '@/components/CameraOverlay';
+import SuccessDialog from '@/components/SuccessDialog';
+import NotificationLogs from '@/components/NotificationLogs';
 
 // Mobile Sub components
-import MobileNav from '../components/mobile/MobileNav';
-import MobileFooterStrip from '../components/mobile/MobileFooterStrip';
+import MobileNav from '@/components/mobile/MobileNav';
+import MobileFooterStrip from '@/components/mobile/MobileFooterStrip';
 
 function CartSnapAppContent() {
   const { activeTab } = useGroceryStore();
@@ -105,9 +107,39 @@ function CartSnapAppContent() {
 }
 
 export default function Page() {
+  const { session, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !session) {
+      router.push('/login');
+    }
+  }, [session, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#f8f9ff]">
+        <div className="relative flex flex-col items-center">
+          <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-lg border border-slate-100 mb-6 overflow-hidden animate-bounce">
+            <img src="/logo.png" alt="CartSnap Logo" className="w-11 h-11 object-contain" />
+          </div>
+          {/* Animated outer spinner ring */}
+          <div className="w-10 h-10 rounded-full border-2 border-emerald-500/20 border-t-[#006e2f] animate-spin mb-4" />
+          <p className="text-[10px] font-black text-slate-400 tracking-widest font-mono uppercase animate-pulse">Initializing Session</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null;
+  }
+
   return (
     <GroceryProvider>
       <CartSnapAppContent />
     </GroceryProvider>
   );
 }
+
+

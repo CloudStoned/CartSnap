@@ -3,6 +3,7 @@
 import React from 'react';
 import { useGroceryStore } from '../store/GroceryStore';
 import { cn } from '../lib/utils';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 export default function SettingsPanel() {
   const {
@@ -14,6 +15,13 @@ export default function SettingsPanel() {
     setBudget,
     playSound
   } = useGroceryStore();
+
+  const { signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    playSound('click');
+    await signOut();
+  };
 
   return (
     <div className="bg-white rounded-2xl border border-slate-100 p-4 shadow-xs space-y-4 text-left">
@@ -79,7 +87,7 @@ export default function SettingsPanel() {
         </button>
       </div>
 
-      {/* sliding budget monitor */}
+      {/* sliding budget limit */}
       <div className="space-y-2 text-xs">
         <div className="flex justify-between items-center">
           <span className="font-bold text-slate-700 font-headline">Supermarket daily limit slider</span>
@@ -100,6 +108,17 @@ export default function SettingsPanel() {
           <span>{currency}300</span>
           <span>{currency}5,000</span>
         </div>
+      </div>
+
+      {/* Sign Out Button */}
+      <div className="pt-3 border-t border-slate-100">
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="w-full py-2 bg-red-50 hover:bg-red-100/70 text-red-600 font-bold rounded-xl text-[10px] flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] border-0 cursor-pointer"
+        >
+          Sign Out of Account
+        </button>
       </div>
     </div>
   );
