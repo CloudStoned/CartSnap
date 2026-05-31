@@ -12,7 +12,6 @@ import {
   ChevronRight 
 } from 'lucide-react';
 import { useGroceryStore } from '../store/GroceryStore';
-import { useCamera } from '../hooks/useCamera';
 
 // Sub components
 import Header from './Header';
@@ -40,15 +39,12 @@ export default function CartSnapApp() {
     currency,
     isCheckoutOpen,
     setIsCheckoutOpen,
-    playSound
-  } = useGroceryStore();
-
-  const {
+    playSound,
     videoRef,
     canvasRef,
     capturePhoto,
     stopCamera
-  } = useCamera();
+  } = useGroceryStore();
 
   return (
     <div id="cartsnap-root" className="min-h-screen w-full bg-[#f8f9ff] text-[#0b1c30] flex flex-col relative font-sans select-none">

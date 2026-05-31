@@ -1,21 +1,31 @@
 'use client';
 
 import { useRef } from 'react';
-import { useGroceryStore } from '../store/GroceryStore';
+import { SoundType } from '../store/types';
 
-export function useCamera() {
-  const {
-    cameraPurpose,
-    setCameraActive,
-    setCameraPurpose,
-    productPhoto,
-    setProductPhoto,
-    pricePhoto,
-    setPricePhoto,
-    triggerImageAnalysis,
-    playSound
-  } = useGroceryStore();
+interface UseCameraProps {
+  cameraPurpose: 'product' | 'price' | null;
+  setCameraActive: (active: boolean) => void;
+  setCameraPurpose: (purpose: 'product' | 'price' | null) => void;
+  productPhoto: string | null;
+  setProductPhoto: (photo: string | null) => void;
+  pricePhoto: string | null;
+  setPricePhoto: (photo: string | null) => void;
+  triggerImageAnalysis: (prodImg: string, priceImg: string, fallbackName?: string, fallbackPrice?: string) => Promise<void>;
+  playSound: (type: SoundType) => void;
+}
 
+export function useCamera({
+  cameraPurpose,
+  setCameraActive,
+  setCameraPurpose,
+  productPhoto,
+  setProductPhoto,
+  pricePhoto,
+  setPricePhoto,
+  triggerImageAnalysis,
+  playSound
+}: UseCameraProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 

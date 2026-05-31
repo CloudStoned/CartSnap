@@ -3,7 +3,6 @@
 import React from 'react';
 import { Camera, Tag, Check, X, Sparkles } from 'lucide-react';
 import { useGroceryStore } from '../store/GroceryStore';
-import { useCamera } from '../hooks/useCamera';
 import { cn } from '../lib/utils';
 
 export default function ScanHub() {
@@ -20,13 +19,9 @@ export default function ScanHub() {
     isProcessing,
     removePhoto,
     handleAddToBasket,
-    playSound
+    playSound,
+    startCamera
   } = useGroceryStore();
-
-  const {
-    startCamera,
-    handleFileUpload
-  } = useCamera();
 
   return (
     <div className="bg-white rounded-2xl p-4.5 border border-slate-100 shadow-xs space-y-4 text-left">
@@ -76,20 +71,14 @@ export default function ScanHub() {
               <span className="text-xs font-bold text-slate-700 font-headline leading-none">Product Snap</span>
               <p className="text-[9px] text-slate-400">Grocery design</p>
               
-              <div className="mt-2.5 flex items-center justify-center gap-2">
+              <div className="mt-2.5 flex items-center justify-center">
                 <button 
                   type="button"
                   onClick={() => startCamera('product')}
-                  className="text-[8px] bg-[#006e2f] font-bold text-white px-2 py-1 rounded hover:bg-emerald-800 transition-colors border-0 cursor-pointer"
+                  className="text-[8px] bg-[#006e2f] font-bold text-white px-3 py-1.5 rounded-md hover:bg-emerald-800 transition-colors border-0 cursor-pointer"
                 >
                   Lens
                 </button>
-                <label 
-                  className="text-[8px] bg-slate-200 font-bold text-slate-700 px-2 py-1 rounded cursor-pointer hover:bg-slate-300 transition-colors"
-                >
-                  File
-                  <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'product')} className="hidden" />
-                </label>
               </div>
             </div>
           )}
@@ -131,20 +120,14 @@ export default function ScanHub() {
               <span className="text-xs font-bold text-slate-700 font-headline leading-none">Price Tag</span>
               <p className="text-[9px] text-slate-400">Barcode/sticker</p>
               
-              <div className="mt-2.5 flex items-center justify-center gap-2">
+              <div className="mt-2.5 flex items-center justify-center">
                 <button 
                   type="button"
                   onClick={() => startCamera('price')}
-                  className="text-[8px] bg-[#006e2f] font-bold text-white px-2 py-1 rounded hover:bg-emerald-800 transition-colors border-0 cursor-pointer"
+                  className="text-[8px] bg-[#006e2f] font-bold text-white px-3 py-1.5 rounded-md hover:bg-emerald-800 transition-colors border-0 cursor-pointer"
                 >
                   Lens
                 </button>
-                <label 
-                  className="text-[8px] bg-slate-200 font-bold text-slate-700 px-2 py-1 rounded cursor-pointer hover:bg-slate-300 transition-colors"
-                >
-                  File
-                  <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'price')} className="hidden" />
-                </label>
               </div>
             </div>
           )}

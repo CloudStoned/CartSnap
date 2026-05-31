@@ -69,6 +69,14 @@ export interface GroceryContextType {
   addNotification: (text: string) => void;
   clearNotifications: () => void;
   
+  // Camera Refs & Actions
+  videoRef: React.RefObject<HTMLVideoElement | null>;
+  canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  startCamera: (purpose: 'product' | 'price') => Promise<void>;
+  capturePhoto: () => void;
+  stopCamera: () => void;
+  handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, purpose: 'product' | 'price') => void;
+  
   // Actions
   triggerImageAnalysis: (prodImg: string, priceImg: string, fallbackName?: string, fallbackPrice?: string) => Promise<void>;
   handleAddToBasket: () => void;

@@ -8,6 +8,7 @@ import { useGrocerySettings } from '../hooks/useGrocerySettings';
 import { useGroceryNotifications } from '../hooks/useGroceryNotifications';
 import { useGroceryScan } from '../hooks/useGroceryScan';
 import { useGroceryBasket } from '../hooks/useGroceryBasket';
+import { useCamera } from '../hooks/useCamera';
 
 const GroceryContext = createContext<GroceryContextType | undefined>(undefined);
 
@@ -21,7 +22,20 @@ export function GroceryProvider({ children }: { children: ReactNode }) {
   // 3. Scanning state & logic (depends on settings.playSound, notifications.addNotification)
   const scan = useGroceryScan(settings.playSound, notifications.addNotification);
 
-  // 4. Basket state & calculations (depends on scan, settings, notifications)
+  // 4. Camera state & refs
+  const camera = useCamera({
+    cameraPurpose: scan.cameraPurpose,
+    setCameraActive: scan.setCameraActive,
+    setCameraPurpose: scan.setCameraPurpose,
+    productPhoto: scan.productPhoto,
+    setProductPhoto: scan.setProductPhoto,
+    pricePhoto: scan.pricePhoto,
+    setPricePhoto: scan.setPricePhoto,
+    triggerImageAnalysis: scan.triggerImageAnalysis,
+    playSound: settings.playSound,
+  });
+
+  // 5. Basket state & calculations (depends on scan, settings, notifications)
   const basket = useGroceryBasket(
     scan.productPhoto,
     scan.pricePhoto,
@@ -74,6 +88,13 @@ export function GroceryProvider({ children }: { children: ReactNode }) {
       setCameraActive: scan.setCameraActive,
       cameraPurpose: scan.cameraPurpose,
       setCameraPurpose: scan.setCameraPurpose,
+      
+      videoRef: camera.videoRef,
+      canvasRef: camera.canvasRef,
+      startCamera: camera.startCamera,
+      capturePhoto: camera.capturePhoto,
+      stopCamera: camera.stopCamera,
+      handleFileUpload: camera.handleFileUpload,
       
       isCheckoutOpen: basket.isCheckoutOpen,
       setIsCheckoutOpen: basket.setIsCheckoutOpen,
