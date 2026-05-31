@@ -18,8 +18,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 bg-white border-b border-indigo-50/50 px-4 sm:px-6 py-3.5 flex justify-between items-center z-20 shadow-xs">
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-[#006e2f] flex items-center justify-center shadow-lg shadow-[#006e2f]/20">
-          <ShoppingBasket className="w-5.5 h-5.5 text-white" />
+        <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-md overflow-hidden border border-slate-100">
+          <img src="/logo.png" alt="CartSnap Logo" className="w-7 h-7 object-contain" />
         </div>
         <div>
           <div className="flex items-center gap-2">
