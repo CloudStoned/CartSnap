@@ -1,20 +1,25 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# CartSnap
 
-# Run and deploy your AI Studio app
+CartSnap is a smart, real-time web-based grocery scanner and budget tracker. Using your camera or device gallery, CartSnap reads item labels and price tags, extracts the product details via the Gemini Vision API, and tracks your basket totals in real time against your personal budget limits.
 
-This contains everything you need to run your app locally.
+## Key Features
 
-View your app in AI Studio: https://ai.studio/apps/2044ff4c-bd6f-4f6a-b105-b1225a800b99
+- **Real-Time OCR Scanner**: Take a photo of an item and its price tag to extract info instantly.
+- **Budget Tracking**: Set a currency preference and budget cap to monitor subtotal limits as you shop.
+- **Dynamic Diagnostics**: Telemetry system logs monitor state machine signals and audio feedback.
 
-## Run Locally
+## Getting Started
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+2. **Configure your API Key**:
+   Create a `.env` or `.env.local` file and add:
+   ```env
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+3. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
