@@ -37,9 +37,12 @@ export default function ScanHub() {
       <div className="grid grid-cols-2 gap-3.5">
         {/* Card 1: Product Photo */}
         <div 
+          onClick={() => !productPhoto && startCamera('product')}
           className={cn(
-            "border-2 border-dashed bg-[#f8f9ff] text-center p-3 rounded-xl cursor-all relative overflow-hidden transition-all flex flex-col items-center justify-center min-h-[140px]",
-            productPhoto ? "border-emerald-500 bg-emerald-50/20" : "border-slate-300 hover:border-emerald-600 animate-pulse-glow"
+            "border-2 border-dashed bg-[#f8f9ff] text-center p-3 rounded-xl relative overflow-hidden transition-all flex flex-col items-center justify-center min-h-[140px]",
+            productPhoto 
+              ? "border-emerald-500 bg-emerald-50/20 cursor-default" 
+              : "border-slate-300 hover:border-emerald-600 hover:bg-emerald-50/10 hover:scale-[1.01] active:scale-[0.99] animate-pulse-glow cursor-pointer"
           )}
         >
           {productPhoto ? (
@@ -53,7 +56,10 @@ export default function ScanHub() {
                 />
                 <button 
                   type="button"
-                  onClick={() => removePhoto('product')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removePhoto('product');
+                  }}
                   className="absolute top-1 right-1 p-1 bg-black/60 text-white hover:bg-black/80 rounded-full border-0 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -64,31 +70,24 @@ export default function ScanHub() {
               </span>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center gap-1.5 text-center">
+            <div className="flex flex-col items-center justify-center gap-1.5 text-center pointer-events-none">
               <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-[#006e2f] mb-1">
                 <Camera className="w-5 h-5" />
               </div>
               <span className="text-xs font-bold text-slate-700 font-headline leading-none">Product Snap</span>
               <p className="text-[9px] text-slate-400">Grocery design</p>
-              
-              <div className="mt-2.5 flex items-center justify-center">
-                <button 
-                  type="button"
-                  onClick={() => startCamera('product')}
-                  className="text-[8px] bg-[#006e2f] font-bold text-white px-3 py-1.5 rounded-md hover:bg-emerald-800 transition-colors border-0 cursor-pointer"
-                >
-                  Lens
-                </button>
-              </div>
             </div>
           )}
         </div>
 
         {/* Card 2: Price Photo */}
         <div 
+          onClick={() => !pricePhoto && startCamera('price')}
           className={cn(
-            "border-2 border-dashed bg-[#f8f9ff] text-center p-3 rounded-xl cursor-all relative overflow-hidden transition-all flex flex-col items-center justify-center min-h-[140px]",
-            pricePhoto ? "border-emerald-500 bg-emerald-50/20" : "border-slate-300 hover:border-emerald-600 animate-pulse-glow"
+            "border-2 border-dashed bg-[#f8f9ff] text-center p-3 rounded-xl relative overflow-hidden transition-all flex flex-col items-center justify-center min-h-[140px]",
+            pricePhoto 
+              ? "border-emerald-500 bg-emerald-50/20 cursor-default" 
+              : "border-slate-300 hover:border-emerald-600 hover:bg-emerald-50/10 hover:scale-[1.01] active:scale-[0.99] animate-pulse-glow cursor-pointer"
           )}
         >
           {pricePhoto ? (
@@ -102,7 +101,10 @@ export default function ScanHub() {
                 />
                 <button 
                   type="button"
-                  onClick={() => removePhoto('price')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removePhoto('price');
+                  }}
                   className="absolute top-1 right-1 p-1 bg-black/60 text-white hover:bg-black/80 rounded-full border-0 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -113,22 +115,12 @@ export default function ScanHub() {
               </span>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center gap-1.5 text-center">
+            <div className="flex flex-col items-center justify-center gap-1.5 text-center pointer-events-none">
               <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-[#006e2f] mb-1">
                 <Tag className="w-5 h-5" />
               </div>
               <span className="text-xs font-bold text-slate-700 font-headline leading-none">Price Tag</span>
               <p className="text-[9px] text-slate-400">Barcode/sticker</p>
-              
-              <div className="mt-2.5 flex items-center justify-center">
-                <button 
-                  type="button"
-                  onClick={() => startCamera('price')}
-                  className="text-[8px] bg-[#006e2f] font-bold text-white px-3 py-1.5 rounded-md hover:bg-emerald-800 transition-colors border-0 cursor-pointer"
-                >
-                  Lens
-                </button>
-              </div>
             </div>
           )}
         </div>
