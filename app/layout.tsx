@@ -21,7 +21,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'FreshTrack - Smart Grocery Scanner & Budget Tracker',
+  title: 'CartSnap - Smart Grocery Scanner & Budget Tracker',
   description: 'Smart grocery product scanning, OCR price extraction, and real-time basket tracking dashboard.',
 };
 

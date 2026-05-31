@@ -5,7 +5,7 @@ import { SoundType } from '../store/types';
 
 export function useGroceryNotifications(playSound: (type: SoundType) => void) {
   const [notifications, setNotifications] = useState<string[]>([
-    "Welcome to FreshTrack! Tap any preset to trigger instant AI vision scanning simulations."
+    "Welcome to CartSnap! Tap any preset to trigger instant AI vision scanning simulations."
   ]);
   const [showNotificationBadge, setShowNotificationBadge] = useState<boolean>(true);
   const [showNotificationsList, setShowNotificationsList] = useState<boolean>(false);

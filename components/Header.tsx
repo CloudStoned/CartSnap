@@ -24,7 +24,7 @@ export default function Header() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-base sm:text-lg font-bold tracking-tight text-[#0b1c30] font-headline">
-              FreshTrack
+              CartSnap
             </h1>
             <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-[#006e2f]">
               <Sparkles className="w-2.5 h-2.5 mr-0.5 text-emerald-600 animate-pulse" /> Gemini Vision Active

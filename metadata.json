@@ -1,5 +1,5 @@
 {
-  "name": "FreshTrack",
+  "name": "CartSnap",
   "description": "Responsive web-based grocery scanner and budget tracker utilizing real-time image scanning and smart calculations.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

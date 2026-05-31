@@ -98,7 +98,7 @@ export function useGroceryBasket(
     setShowOrderDone(true);
     setIsCheckoutOpen(false);
     clearBasket();
-    addNotification(`Checked out successfully! Thank you for using FreshTrack.`);
+    addNotification(`Checked out successfully! Thank you for using CartSnap.`);
   };
 
   // Calculations

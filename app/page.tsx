@@ -1,12 +1,12 @@
 'use client';
 
 import { GroceryProvider } from '../store/GroceryStore';
-import FreshTrackApp from '../components/FreshTrackApp';
+import CartSnapApp from '../components/CartSnapApp';
 
 export default function Page() {
   return (
     <GroceryProvider>
-      <FreshTrackApp />
+      <CartSnapApp />
     </GroceryProvider>
   );
 }

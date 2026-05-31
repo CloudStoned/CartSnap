@@ -23,7 +23,7 @@ import ScanHub from './ScanHub';
 import BasketPanel from './BasketPanel';
 import CheckoutModal from './CheckoutModal';
 
-export default function FreshTrackApp() {
+export default function CartSnapApp() {
   const {
     activeTab,
     switchTab,
@@ -51,7 +51,7 @@ export default function FreshTrackApp() {
   } = useCamera();
 
   return (
-    <div id="freshtrack-root" className="min-h-screen w-full bg-[#f8f9ff] text-[#0b1c30] flex flex-col relative font-sans select-none">
+    <div id="cartsnap-root" className="min-h-screen w-full bg-[#f8f9ff] text-[#0b1c30] flex flex-col relative font-sans select-none">
       
       {/* Dynamic Camera constraints viewport */}
       {cameraActive && (
