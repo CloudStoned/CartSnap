@@ -31,6 +31,7 @@ cartsnap/
 │   ├── NotificationLogs.tsx  # Dynamic list toast logs representing updates
 │   ├── BudgetCard.tsx        # Dashboard card showing budget gauge indicator
 │   ├── StatsCard.tsx         # Dashboard card showing total spent vs budget
+│   ├── PWARegister.tsx       # Registers the PWA service worker on window load
 │   ├── auth/                 # Auth-related visual components
 │   │   ├── AuthBackground.tsx, AuthCard.tsx, AuthForm.tsx, AuthHeader.tsx, AuthTabs.tsx, AuthAlerts.tsx, AuthSandbox.tsx
 │   │   └── index.ts          # Exports auth presentation components
