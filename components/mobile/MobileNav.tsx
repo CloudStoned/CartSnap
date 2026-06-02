@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Home, Camera, User } from 'lucide-react';
+import { Home, Camera, User, BarChart3 } from 'lucide-react';
 import { useGroceryStore } from '../../store/GroceryStore';
 
 export default function MobileNav() {
@@ -44,7 +44,22 @@ export default function MobileNav() {
         </button>
       </div>
 
-      {/* Tab 3: Account / Settings */}
+      {/* Tab 3: Insights */}
+      <button 
+        type="button"
+        onClick={() => switchTab('insights')}
+        className={`flex flex-col items-center justify-center gap-1 w-14 h-full relative transition-all active:scale-95 border-0 bg-transparent cursor-pointer ${
+          activeTab === 'insights' ? "text-[#006e2f]" : "text-slate-400 hover:text-slate-600"
+        }`}
+      >
+        <BarChart3 className="w-5 h-5 animate-fade-in" />
+        <span className="text-[10px] font-bold font-headline">Insights</span>
+        {activeTab === 'insights' && (
+          <span className="absolute bottom-1 w-1 h-1 bg-[#006e2f] rounded-full animate-fade-in" />
+        )}
+      </button>
+
+      {/* Tab 4: Account / Settings */}
       <button 
         type="button"
         onClick={() => switchTab('account')}

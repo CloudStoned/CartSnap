@@ -32,6 +32,11 @@ cartsnap/
 │   ├── BudgetCard.tsx        # Dashboard card showing budget gauge indicator
 │   ├── StatsCard.tsx         # Dashboard card showing total spent vs budget
 │   ├── PWARegister.tsx       # Registers the PWA service worker on window load
+│   ├── insights/             # Modular dashboard analytics & spending insights
+│   │   ├── InsightsPanel.tsx # Coordinates data retrieval and page layout
+│   │   ├── DailyChart.tsx    # Click-interactive vertical bar spending graph
+│   │   ├── CheckoutDetails.tsx # Detailed itemized receipt lists for the selected date
+│   │   └── index.ts          # Exports insights presentation components
 │   ├── auth/                 # Auth-related visual components
 │   │   ├── AuthBackground.tsx, AuthCard.tsx, AuthForm.tsx, AuthHeader.tsx, AuthTabs.tsx, AuthAlerts.tsx, AuthSandbox.tsx
 │   │   └── index.ts          # Exports auth presentation components

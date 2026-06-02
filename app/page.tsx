@@ -16,13 +16,14 @@ import CheckoutModal from '@/components/CheckoutModal';
 import CameraOverlay from '@/components/CameraOverlay';
 import SuccessDialog from '@/components/SuccessDialog';
 import NotificationLogs from '@/components/NotificationLogs';
+import InsightsPanel from '@/components/insights';
 
 // Mobile Sub components
 import MobileNav from '@/components/mobile/MobileNav';
 import MobileFooterStrip from '@/components/mobile/MobileFooterStrip';
 
 function CartSnapAppContent() {
-  const { activeTab } = useGroceryStore();
+  const { activeTab, switchTab } = useGroceryStore();
 
   return (
     <div id="cartsnap-root" className="h-screen lg:min-h-screen lg:h-auto overflow-hidden lg:overflow-visible w-full bg-[#f8f9ff] text-[#0b1c30] flex flex-col relative font-sans select-none">
@@ -45,17 +46,65 @@ function CartSnapAppContent() {
           {/* Left space col (Width 3/12) */}
           <div className="col-span-3 space-y-6">
             <BudgetCard />
+
+            {/* Desktop Navigation panel */}
+            <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-xs space-y-2 text-left">
+              <h5 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Navigation</h5>
+              <button
+                type="button"
+                onClick={() => switchTab('home')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold font-headline transition-all cursor-pointer block border-0 ${
+                  activeTab === 'home' || activeTab === 'scan'
+                    ? 'bg-emerald-50 text-[#006e2f]'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                Dashboard
+              </button>
+              <button
+                type="button"
+                onClick={() => switchTab('insights')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold font-headline transition-all cursor-pointer block border-0 ${
+                  activeTab === 'insights'
+                    ? 'bg-emerald-50 text-[#006e2f]'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                Spending Insights
+              </button>
+              <button
+                type="button"
+                onClick={() => switchTab('account')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold font-headline transition-all cursor-pointer block border-0 ${
+                  activeTab === 'account'
+                    ? 'bg-emerald-50 text-[#006e2f]'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                Account Settings
+              </button>
+            </div>
           </div>
 
-          {/* Center scan area col (Width 5/12) */}
-          <div className="col-span-5 space-y-6">
-            <ScanHub />
-          </div>
-
-          {/* Right persistent basket (Width 4/12) */}
-          <div className="col-span-4 space-y-6">
-            <BasketPanel isWidescreen={true} />
-          </div>
+          {/* Center scan area col / Insights / Settings (Width 5/12 or 9/12) */}
+          {(activeTab === 'home' || activeTab === 'scan') ? (
+            <>
+              <div className="col-span-5 space-y-6">
+                <ScanHub />
+              </div>
+              <div className="col-span-4 space-y-6">
+                <BasketPanel isWidescreen={true} />
+              </div>
+            </>
+          ) : activeTab === 'insights' ? (
+            <div className="col-span-9 space-y-6">
+              <InsightsPanel />
+            </div>
+          ) : (
+            <div className="col-span-9 space-y-6">
+              <SettingsPanel />
+            </div>
+          )}
         </div>
 
         {/* 2. MOBILE FEED LAYOUT WITH BOTTOM NAVIGATION (under lg: breakpoint) */}
@@ -70,6 +119,12 @@ function CartSnapAppContent() {
           {activeTab === 'scan' && (
             <>
               <ScanHub />
+            </>
+          )}
+
+          {activeTab === 'insights' && (
+            <>
+              <InsightsPanel />
             </>
           )}
 
