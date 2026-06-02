@@ -1,7 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GroceryItem, SoundType } from '../store/types';
+import {
+  fetchCartItems,
+  addCartItem,
+  updateCartItemQuantity,
+  deleteCartItem,
+  clearCart,
+  createCheckout
+} from '@/lib/queries';
 
 let uniqueCounter = 0;
 function getUniquelyGeneratedId(): string {
@@ -24,21 +32,38 @@ export function useGroceryBasket(
   switchTab: (tab: 'home' | 'scan' | 'account') => void,
   playSound: (type: SoundType) => void,
   addNotification: (text: string) => void,
-  budget: number
+  budget: number,
+  userId?: string,
+  currency: string = '₱'
 ) {
   const [basket, setBasket] = useState<GroceryItem[]>([]);
   const [receiptRef, setReceiptRef] = useState<string>('FT-128394');
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
   const [showOrderDone, setShowOrderDone] = useState<boolean>(false);
 
-  const handleAddToBasket = () => {
-    // 1. Validation: product photo must be captured/uploaded
+  // 1. Fetch initial cart items from Supabase when user ID becomes available
+  useEffect(() => {
+    if (!userId) {
+      setBasket([]);
+      return;
+    }
+    fetchCartItems(userId)
+      .then((items) => {
+        setBasket(items);
+      })
+      .catch((err) => {
+        console.error('Failed to load active cart items:', err);
+      });
+  }, [userId]);
+
+  const handleAddToBasket = async () => {
+    // Validation: product photo must be captured/uploaded
     if (!productPhoto) {
       alert("Please capture a product photo first.");
       return;
     }
     
-    // 2. Validation: price is required
+    // Validation: price is required
     const trimmedPrice = scannedPrice.trim();
     if (!trimmedPrice) {
       alert("Please enter the price.");
@@ -50,28 +75,45 @@ export function useGroceryBasket(
       return;
     }
 
-    // 3. Name is optional: default to 'Grocery Item' if empty
+    // Name is optional: default to 'Grocery Item' if empty
     const finalName = scannedName.trim() || 'Grocery Item';
     
-    const newItem: GroceryItem = {
-      id: getUniquelyGeneratedId(),
-      name: finalName,
-      category: scannedCategory,
-      price: priceNum,
-      quantity: 1,
-      productImage: productPhoto,
-      priceImage: ''
-    };
+    const existingItem = basket.find(
+      item => item.name.toLowerCase() === finalName.toLowerCase() && item.category === scannedCategory
+    );
 
-    setBasket(prev => {
-      const existingIdx = prev.findIndex(item => item.name.toLowerCase() === finalName.toLowerCase() && item.category === scannedCategory);
-      if (existingIdx > -1) {
-        const updated = [...prev];
-        updated[existingIdx].quantity += 1;
-        return updated;
+    if (existingItem) {
+      const newQty = existingItem.quantity + 1;
+      if (userId) {
+        try {
+          await updateCartItemQuantity(userId, existingItem.id, newQty);
+        } catch (err) {
+          console.error("Failed to sync updated cart quantity:", err);
+        }
       }
-      return [...prev, newItem];
-    });
+      setBasket(prev => prev.map(item => item.id === existingItem.id ? { ...item, quantity: newQty } : item));
+    } else {
+      const newItemData: Omit<GroceryItem, 'id'> = {
+        name: finalName,
+        category: scannedCategory,
+        price: priceNum,
+        quantity: 1,
+        productImage: productPhoto,
+        priceImage: ''
+      };
+
+      let finalId = getUniquelyGeneratedId();
+      if (userId) {
+        try {
+          const saved = await addCartItem(userId, newItemData);
+          finalId = saved.id;
+        } catch (err) {
+          console.error("Failed to save cart item to database:", err);
+        }
+      }
+
+      setBasket(prev => [...prev, { ...newItemData, id: finalId }]);
+    }
 
     playSound('success');
     addNotification(`Added 1x "${finalName}" into basket.`);
@@ -83,33 +125,79 @@ export function useGroceryBasket(
     switchTab('home');
   };
 
-  const updateQuantity = (id: string, delta: number) => {
+  const updateQuantity = async (id: string, delta: number) => {
     playSound('click');
+    const item = basket.find(i => i.id === id);
+    if (!item) return;
+
+    const newQty = Math.max(1, item.quantity + delta);
+
+    if (userId) {
+      try {
+        await updateCartItemQuantity(userId, id, newQty);
+      } catch (err) {
+        console.error("Failed to sync quantity update:", err);
+      }
+    }
+
     setBasket(prev => prev.map(item => {
       if (item.id === id) {
-        const newQty = item.quantity + delta;
-        return { ...item, quantity: Math.max(1, newQty) };
+        return { ...item, quantity: newQty };
       }
       return item;
     }));
   };
 
-  const deleteItem = (id: string, name: string) => {
+  const deleteItem = async (id: string, name: string) => {
     playSound('delete');
+    if (userId) {
+      try {
+        await deleteCartItem(userId, id);
+      } catch (err) {
+        console.error("Failed to delete cart item:", err);
+      }
+    }
     setBasket(prev => prev.filter(item => item.id !== id));
     addNotification(`Removed "${name}" from basket.`);
   };
 
-  const clearBasket = () => {
+  const clearBasket = async () => {
+    if (userId) {
+      try {
+        await clearCart(userId);
+      } catch (err) {
+        console.error("Failed to clear cart in database:", err);
+      }
+    }
     setBasket([]);
   };
 
-  const handleConfirmCheckout = () => {
+  const handleConfirmCheckout = async () => {
     playSound('success');
-    setReceiptRef(generateRandomReceiptRef());
+    const newReceiptRef = generateRandomReceiptRef();
+
+    if (userId) {
+      try {
+        await createCheckout(userId, {
+          receiptRef: newReceiptRef,
+          totalAmount,
+          discountAmount: dynamicDiscount,
+          finalAmount,
+          budgetLimit: budget,
+          currency,
+          items: basket
+        });
+      } catch (err) {
+        console.error("Failed to save checkout to database:", err);
+        alert("Unable to process checkout. Please try again.");
+        return;
+      }
+    }
+
+    setReceiptRef(newReceiptRef);
     setShowOrderDone(true);
     setIsCheckoutOpen(false);
-    clearBasket();
+    setBasket([]);
     addNotification(`Checked out successfully! Thank you for using CartSnap.`);
   };
 

@@ -9,12 +9,16 @@ import { useGroceryNotifications } from '../hooks/scan/useGroceryNotifications';
 import { useGroceryScan } from '../hooks/scan';
 import { useGroceryBasket } from '../hooks/useGroceryBasket';
 import { useCamera } from '../hooks/useCamera';
+import { useAuth } from '../hooks/auth/useAuth';
 
 const GroceryContext = createContext<GroceryContextType | undefined>(undefined);
 
 export function GroceryProvider({ children }: { children: ReactNode }) {
+  const { session } = useAuth();
+  const userId = session?.user?.id;
+
   // 1. Settings state & logic
-  const settings = useGrocerySettings();
+  const settings = useGrocerySettings(userId);
 
   // 2. Notifications log logic (depends on settings.playSound)
   const notifications = useGroceryNotifications(settings.playSound);
@@ -41,7 +45,9 @@ export function GroceryProvider({ children }: { children: ReactNode }) {
     settings.switchTab,
     settings.playSound,
     notifications.addNotification,
-    settings.budget
+    settings.budget,
+    userId,
+    settings.currency
   );
 
   return (

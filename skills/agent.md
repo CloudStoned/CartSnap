@@ -58,6 +58,7 @@ cartsnap/
 │   ├── supabase/             # Supabase configuration for client & server auth
 │   │   ├── client.ts
 │   │   └── server.ts
+│   ├── queries/              # Supabase queries and database interaction modules
 │   └── utils.ts              # UI utilities (e.g. cn classnames merger)
 └── skills/                   # Agent operational guidelines
     ├── agent.md              # THIS FILE: Project rules and codebase architecture reference
@@ -74,6 +75,7 @@ cartsnap/
     *   **Module Entrypoints (`index.ts`)**: Expose components/hooks via a clean `index.ts` export, and use clean imports (e.g. import from `../hooks/scan` instead of `../hooks/scan/useGroceryScan`).
     *   **Hooks vs. Helpers**: Custom React hooks should only manage React state and orchestration. Extract any heavy logic (like calculations, parsing, OCR processing) to standalone helper/utility files adjacent to the hook.
     *   **Data Integrity**: Avoid hardcoded mock simulation data. Validate input and handle errors with explicit user alerts.
+    *   **Supabase Query Location**: All database queries and Supabase data-fetching interactions must live inside the `lib/queries/` directory. UI components and custom hooks must import these query functions rather than writing raw database calls (e.g., `supabase.from(...)`) directly.
 
 ---
 
