@@ -42,3 +42,25 @@
 input[type="file"] {
   display: none;
 }
+
+/* Mobile App feeling overrides (under lg breakpoint) */
+@media (max-width: 1023px) {
+  html, body {
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    overscroll-behavior: none;
+    touch-action: pan-y; /* Disables double-tap and pinch-to-zoom, allows vertical touch pan */
+  }
+
+  /* Hide scrollbar globally on mobile devices */
+  * {
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;  /* Firefox */
+  }
+  
+  *::-webkit-scrollbar {
+    display: none !important;  /* Chrome, Safari, Opera */
+  }
+}

@@ -26,7 +26,7 @@ function CartSnapAppContent() {
   const { activeTab } = useGroceryStore();
 
   return (
-    <div id="cartsnap-root" className="min-h-screen w-full bg-[#f8f9ff] text-[#0b1c30] flex flex-col relative font-sans select-none">
+    <div id="cartsnap-root" className="h-screen lg:min-h-screen lg:h-auto overflow-hidden lg:overflow-visible w-full bg-[#f8f9ff] text-[#0b1c30] flex flex-col relative font-sans select-none">
       {/* Dynamic Camera constraints viewport */}
       <CameraOverlay />
 
@@ -34,7 +34,7 @@ function CartSnapAppContent() {
       <Header />
 
       {/* CORE ADAPTIVE LAYOUT SECTION */}
-      <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 pb-28 lg:pb-6 space-y-6">
+      <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 pb-28 lg:pb-6 space-y-6 overflow-y-auto lg:overflow-visible overscroll-contain">
         {/* SUCCESS INLINE NOTIFICATION STATUS */}
         <SuccessDialog />
 
