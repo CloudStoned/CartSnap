@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Camera, Tag, Check, X, Sparkles } from 'lucide-react';
+import { Camera, Check, X } from 'lucide-react';
 import { useGroceryStore } from '../store/GroceryStore';
 import { cn } from '../lib/utils';
 
@@ -9,14 +9,12 @@ export default function ScanHub() {
   const {
     currency,
     productPhoto,
-    pricePhoto,
     scannedName,
     setScannedName,
     scannedPrice,
     setScannedPrice,
     scannedCategory,
     setScannedCategory,
-    isProcessing,
     removePhoto,
     handleAddToBasket,
     playSound,
@@ -30,24 +28,24 @@ export default function ScanHub() {
           <Camera className="w-4 h-4 text-[#006e2f]" /> Smart Scanning Hub
         </h3>
         <p className="text-[11px] text-slate-400 leading-relaxed">
-          Align receipts, labels or product shapes. Local PaddleOCR retrieves OCR price markings entirely offline using your webcam or photo uploads.
+          Snap a photo of the product, then enter its details manually. Everything is calculated locally and offline.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3.5">
+      <div>
         {/* Card 1: Product Photo */}
         <div 
-          onClick={() => !productPhoto && startCamera('product')}
+          onClick={() => !productPhoto && startCamera()}
           className={cn(
-            "border-2 border-dashed bg-[#f8f9ff] text-center p-3 rounded-xl relative overflow-hidden transition-all flex flex-col items-center justify-center min-h-[140px]",
+            "border-2 border-dashed bg-[#f8f9ff] text-center p-4 rounded-xl relative overflow-hidden transition-all flex flex-col items-center justify-center min-h-[160px]",
             productPhoto 
               ? "border-emerald-500 bg-emerald-50/20 cursor-default" 
               : "border-slate-300 hover:border-emerald-600 hover:bg-emerald-50/10 hover:scale-[1.01] active:scale-[0.99] animate-pulse-glow cursor-pointer"
           )}
         >
           {productPhoto ? (
-            <div className="w-full h-full flex flex-col justify-between items-center text-center gap-1.5">
-              <div className="relative w-full h-[85px] rounded-lg bg-black overflow-hidden border border-emerald-300 shadow-sm">
+            <div className="w-full h-full flex flex-col justify-between items-center text-center gap-2">
+              <div className="relative w-full max-w-[280px] h-[110px] rounded-lg bg-black overflow-hidden border border-emerald-300 shadow-sm mx-auto">
                 <img 
                   src={productPhoto} 
                   alt="Scanned product" 
@@ -60,92 +58,32 @@ export default function ScanHub() {
                     e.stopPropagation();
                     removePhoto('product');
                   }}
-                  className="absolute top-1 right-1 p-1 bg-black/60 text-white hover:bg-black/80 rounded-full border-0 cursor-pointer"
+                  className="absolute top-1.5 right-1.5 p-1 bg-black/60 text-white hover:bg-black/80 rounded-full border-0 cursor-pointer"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
-              <span className="text-[10px] text-emerald-800 font-extrabold flex items-center gap-0.5">
-                <Check className="w-3.5 h-3.5" /> Product photo
+              <span className="text-xs text-emerald-800 font-extrabold flex items-center gap-1">
+                <Check className="w-4 h-4 text-[#006e2f]" /> Product photo captured
               </span>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center gap-1.5 text-center pointer-events-none">
-              <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-[#006e2f] mb-1">
-                <Camera className="w-5 h-5" />
+            <div className="flex flex-col items-center justify-center gap-2 text-center pointer-events-none">
+              <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-[#006e2f] mb-1">
+                <Camera className="w-6 h-6" />
               </div>
-              <span className="text-xs font-bold text-slate-700 font-headline leading-none">Product Snap</span>
-              <p className="text-[9px] text-slate-400">Grocery design</p>
-            </div>
-          )}
-        </div>
-
-        {/* Card 2: Price Photo */}
-        <div 
-          onClick={() => !pricePhoto && startCamera('price')}
-          className={cn(
-            "border-2 border-dashed bg-[#f8f9ff] text-center p-3 rounded-xl relative overflow-hidden transition-all flex flex-col items-center justify-center min-h-[140px]",
-            pricePhoto 
-              ? "border-emerald-500 bg-emerald-50/20 cursor-default" 
-              : "border-slate-300 hover:border-emerald-600 hover:bg-emerald-50/10 hover:scale-[1.01] active:scale-[0.99] animate-pulse-glow cursor-pointer"
-          )}
-        >
-          {pricePhoto ? (
-            <div className="w-full h-full flex flex-col justify-between items-center text-center gap-1.5">
-              <div className="relative w-full h-[85px] rounded-lg bg-black overflow-hidden border border-emerald-300 shadow-sm">
-                <img 
-                  src={pricePhoto} 
-                  alt="Scanned price" 
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-                <button 
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removePhoto('price');
-                  }}
-                  className="absolute top-1 right-1 p-1 bg-black/60 text-white hover:bg-black/80 rounded-full border-0 cursor-pointer"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              <span className="text-[10px] text-emerald-800 font-extrabold flex items-center gap-0.5">
-                <Check className="w-3.5 h-3.5" /> Price photo
-              </span>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center gap-1.5 text-center pointer-events-none">
-              <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-[#006e2f] mb-1">
-                <Tag className="w-5 h-5" />
-              </div>
-              <span className="text-xs font-bold text-slate-700 font-headline leading-none">Price Tag</span>
-              <p className="text-[9px] text-slate-400">Barcode/sticker</p>
+              <span className="text-sm font-bold text-slate-700 font-headline leading-none">Product Snap</span>
+              <p className="text-xs text-slate-400">Tap to capture the product photo</p>
             </div>
           )}
         </div>
       </div>
 
-      {/* OCR EXTRACTION PANEL */}
       <div className="space-y-4 pt-1">
-        {isProcessing ? (
-          <div className="flex items-center gap-3 bg-emerald-50/50 p-3 rounded-xl border border-emerald-100/50">
-            <div className="w-5 h-5 rounded-full border-2 border-[#006e2f] border-t-transparent animate-spin flex-shrink-0" />
-            <div className="space-y-0.5 flex-1 min-w-0">
-              <p className="text-[11px] font-bold text-emerald-900 font-headline uppercase tracking-wider animate-pulse">PaddleOCR offline scanning...</p>
-              <p className="text-[9px] text-slate-500 truncate">Processing images locally on your device with PP-OCRv5.</p>
-            </div>
-          </div>
-        ) : scannedName ? (
-          <div className="flex items-center gap-2 bg-emerald-50 p-2 px-3 rounded-xl text-emerald-800 text-[10px] font-bold border border-emerald-100/60 shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-[#006e2f]" /> OCR Verification Success
-          </div>
-        ) : null}
-
         <div className="space-y-3.5">
           {/* Input Name */}
           <div className="space-y-1">
-            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">Product Name Label</label>
+            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">Product Name (Optional)</label>
             <input 
               type="text" 
               value={scannedName}
@@ -157,7 +95,7 @@ export default function ScanHub() {
 
           {/* Input Price */}
           <div className="space-y-1">
-            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">OCR Extracted Price ({currency})</label>
+            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">Price (Required)</label>
             <div className="relative">
               <span className="absolute left-3.5 top-2.5 text-sm font-semibold text-slate-400">{currency}</span>
               <input 
@@ -200,13 +138,9 @@ export default function ScanHub() {
         <button 
           type="button"
           onClick={handleAddToBasket}
-          disabled={isProcessing}
-          className={cn(
-            "w-full py-3.5 text-xs font-bold tracking-wider text-white uppercase rounded-xl transition-all duration-300 flex items-center justify-center gap-2 active:scale-97 shadow-md shadow-[#006e2f]/10 mt-2 border-0 cursor-pointer",
-            isProcessing ? "bg-slate-300 opacity-60 cursor-not-allowed" : "bg-[#006e2f] hover:bg-emerald-800"
-          )}
+          className="w-full py-3.5 text-xs font-bold tracking-wider text-white uppercase rounded-xl transition-all duration-300 flex items-center justify-center gap-2 active:scale-97 shadow-md shadow-[#006e2f]/10 mt-2 border-0 cursor-pointer bg-[#006e2f] hover:bg-emerald-800"
         >
-          {isProcessing ? "Extracting Details..." : "Add Scanned Item into Basket"}
+          Add Item to Basket
         </button>
       </div>
     </div>

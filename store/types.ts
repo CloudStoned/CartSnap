@@ -37,22 +37,16 @@ export interface GroceryContextType {
   // Scanner Form State
   productPhoto: string | null;
   setProductPhoto: (photo: string | null) => void;
-  pricePhoto: string | null;
-  setPricePhoto: (photo: string | null) => void;
   scannedName: string;
   setScannedName: (name: string) => void;
   scannedPrice: string;
   setScannedPrice: (price: string) => void;
   scannedCategory: string;
   setScannedCategory: (category: string) => void;
-  isProcessing: boolean;
-  setIsProcessing: (processing: boolean) => void;
   
   // Camera State
   cameraActive: boolean;
   setCameraActive: (active: boolean) => void;
-  cameraPurpose: 'product' | 'price' | null;
-  setCameraPurpose: (purpose: 'product' | 'price' | null) => void;
   
   // Checkout & confirmations
   isCheckoutOpen: boolean;
@@ -72,13 +66,11 @@ export interface GroceryContextType {
   // Camera Refs & Actions
   videoRef: React.RefObject<HTMLVideoElement | null>;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
-  startCamera: (purpose: 'product' | 'price') => Promise<void>;
+  startCamera: () => Promise<void>;
   capturePhoto: () => void;
   stopCamera: () => void;
-  handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>, purpose: 'product' | 'price') => void;
   
   // Actions
-  triggerImageAnalysis: (prodImg: string, priceImg: string, fallbackName?: string, fallbackPrice?: string) => Promise<void>;
   handleAddToBasket: () => void;
   removePhoto: (type: 'product' | 'price') => void;
   updateQuantity: (id: string, delta: number) => void;
@@ -86,3 +78,4 @@ export interface GroceryContextType {
   handleConfirmCheckout: () => void;
   clearBasket: () => void;
 }
+

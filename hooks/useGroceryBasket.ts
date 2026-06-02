@@ -15,12 +15,10 @@ function generateRandomReceiptRef(): string {
 
 export function useGroceryBasket(
   productPhoto: string | null,
-  pricePhoto: string | null,
   scannedName: string,
   scannedPrice: string,
   scannedCategory: string,
   setProductPhoto: (photo: string | null) => void,
-  setPricePhoto: (photo: string | null) => void,
   setScannedName: (name: string) => void,
   setScannedPrice: (price: string) => void,
   switchTab: (tab: 'home' | 'scan' | 'account') => void,
@@ -34,24 +32,39 @@ export function useGroceryBasket(
   const [showOrderDone, setShowOrderDone] = useState<boolean>(false);
 
   const handleAddToBasket = () => {
-    if (!scannedName.trim()) {
-      alert("Please provide a product name.");
+    // 1. Validation: product photo must be captured/uploaded
+    if (!productPhoto) {
+      alert("Please capture a product photo first.");
       return;
     }
     
-    const priceNum = parseFloat(scannedPrice) || 0;
+    // 2. Validation: price is required
+    const trimmedPrice = scannedPrice.trim();
+    if (!trimmedPrice) {
+      alert("Please enter the price.");
+      return;
+    }
+    const priceNum = parseFloat(trimmedPrice);
+    if (isNaN(priceNum) || priceNum <= 0) {
+      alert("Please enter a valid price greater than 0.");
+      return;
+    }
+
+    // 3. Name is optional: default to 'Grocery Item' if empty
+    const finalName = scannedName.trim() || 'Grocery Item';
+    
     const newItem: GroceryItem = {
       id: getUniquelyGeneratedId(),
-      name: scannedName,
+      name: finalName,
       category: scannedCategory,
       price: priceNum,
       quantity: 1,
-      productImage: productPhoto || `https://picsum.photos/seed/${encodeURIComponent(scannedName)}/150/150`,
-      priceImage: pricePhoto || ''
+      productImage: productPhoto,
+      priceImage: ''
     };
 
     setBasket(prev => {
-      const existingIdx = prev.findIndex(item => item.name.toLowerCase() === scannedName.toLowerCase() && item.category === scannedCategory);
+      const existingIdx = prev.findIndex(item => item.name.toLowerCase() === finalName.toLowerCase() && item.category === scannedCategory);
       if (existingIdx > -1) {
         const updated = [...prev];
         updated[existingIdx].quantity += 1;
@@ -61,10 +74,9 @@ export function useGroceryBasket(
     });
 
     playSound('success');
-    addNotification(`Added 1x "${scannedName}" into basket.`);
+    addNotification(`Added 1x "${finalName}" into basket.`);
     
     setProductPhoto(null);
-    setPricePhoto(null);
     setScannedName('');
     setScannedPrice('');
     

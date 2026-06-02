@@ -20,7 +20,7 @@ export default function CameraOverlay() {
           <div className="flex justify-between items-center text-white">
             <span className="text-sm font-semibold tracking-wider flex items-center gap-1.5 font-headline">
               <span className="w-2.5 h-2.5 bg-red-600 rounded-full animate-pulse" />
-              LIVE BARCODE/LABEL CAM
+              LIVE PRODUCT CAM
             </span>
             <button 
               type="button"
@@ -45,7 +45,7 @@ export default function CameraOverlay() {
 
           <div className="flex flex-col gap-4 text-center pb-2 max-w-sm mx-auto w-full">
             <p className="text-xs text-slate-300">
-              Align pricing sticker or barcode label inside the lens container.
+              Align the product inside the lens container.
             </p>
             <button 
               type="button"

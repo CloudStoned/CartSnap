@@ -4,35 +4,22 @@ import { useRef } from 'react';
 import { SoundType } from '../store/types';
 
 interface UseCameraProps {
-  cameraPurpose: 'product' | 'price' | null;
   setCameraActive: (active: boolean) => void;
-  setCameraPurpose: (purpose: 'product' | 'price' | null) => void;
-  productPhoto: string | null;
   setProductPhoto: (photo: string | null) => void;
-  pricePhoto: string | null;
-  setPricePhoto: (photo: string | null) => void;
-  triggerImageAnalysis: (prodImg: string, priceImg: string, fallbackName?: string, fallbackPrice?: string) => Promise<void>;
   playSound: (type: SoundType) => void;
 }
 
 export function useCamera({
-  cameraPurpose,
   setCameraActive,
-  setCameraPurpose,
-  productPhoto,
   setProductPhoto,
-  pricePhoto,
-  setPricePhoto,
-  triggerImageAnalysis,
   playSound
 }: UseCameraProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const startCamera = async (purpose: 'product' | 'price') => {
+  const startCamera = async () => {
     playSound('click');
     setCameraActive(true);
-    setCameraPurpose(purpose);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' },
@@ -44,9 +31,8 @@ export function useCamera({
       }
     } catch (err) {
       console.error("Camera access failed:", err);
-      alert("Camera access failed in this frame. Please select a Preloaded Preset item or upload a local file to test.");
+      alert("Camera access failed. Please ensure camera permissions are granted.");
       setCameraActive(false);
-      setCameraPurpose(null);
     }
   };
 
@@ -61,22 +47,7 @@ export function useCamera({
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const dataUrl = canvas.toDataURL('image/jpeg');
         playSound('beep');
-        
-        if (cameraPurpose === 'product') {
-          setProductPhoto(dataUrl);
-          if (pricePhoto) {
-            triggerImageAnalysis(dataUrl, pricePhoto);
-          } else {
-            triggerImageAnalysis(dataUrl, '');
-          }
-        } else {
-          setPricePhoto(dataUrl);
-          if (productPhoto) {
-            triggerImageAnalysis(productPhoto, dataUrl);
-          } else {
-            triggerImageAnalysis('', dataUrl);
-          }
-        }
+        setProductPhoto(dataUrl);
       }
       stopCamera();
     }
@@ -89,34 +60,6 @@ export function useCamera({
       videoRef.current.srcObject = null;
     }
     setCameraActive(false);
-    setCameraPurpose(null);
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, purpose: 'product' | 'price') => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      playSound('beep');
-      if (purpose === 'product') {
-        setProductPhoto(result);
-        if (pricePhoto) {
-          triggerImageAnalysis(result, pricePhoto);
-        } else {
-          triggerImageAnalysis(result, '');
-        }
-      } else {
-        setPricePhoto(result);
-        if (productPhoto) {
-          triggerImageAnalysis(productPhoto, result);
-        } else {
-          triggerImageAnalysis('', result);
-        }
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   return {
@@ -124,7 +67,6 @@ export function useCamera({
     canvasRef,
     startCamera,
     capturePhoto,
-    stopCamera,
-    handleFileUpload
+    stopCamera
   };
 }

@@ -24,26 +24,18 @@ export function GroceryProvider({ children }: { children: ReactNode }) {
 
   // 4. Camera state & refs
   const camera = useCamera({
-    cameraPurpose: scan.cameraPurpose,
     setCameraActive: scan.setCameraActive,
-    setCameraPurpose: scan.setCameraPurpose,
-    productPhoto: scan.productPhoto,
     setProductPhoto: scan.setProductPhoto,
-    pricePhoto: scan.pricePhoto,
-    setPricePhoto: scan.setPricePhoto,
-    triggerImageAnalysis: scan.triggerImageAnalysis,
     playSound: settings.playSound,
   });
 
   // 5. Basket state & calculations (depends on scan, settings, notifications)
   const basket = useGroceryBasket(
     scan.productPhoto,
-    scan.pricePhoto,
     scan.scannedName,
     scan.scannedPrice,
     scan.scannedCategory,
     scan.setProductPhoto,
-    scan.setPricePhoto,
     scan.setScannedName,
     scan.setScannedPrice,
     settings.switchTab,
@@ -74,27 +66,20 @@ export function GroceryProvider({ children }: { children: ReactNode }) {
       
       productPhoto: scan.productPhoto,
       setProductPhoto: scan.setProductPhoto,
-      pricePhoto: scan.pricePhoto,
-      setPricePhoto: scan.setPricePhoto,
       scannedName: scan.scannedName,
       setScannedName: scan.setScannedName,
       scannedPrice: scan.scannedPrice,
       setScannedPrice: scan.setScannedPrice,
       scannedCategory: scan.scannedCategory,
       setScannedCategory: scan.setScannedCategory,
-      isProcessing: scan.isProcessing,
-      setIsProcessing: scan.setIsProcessing,
       cameraActive: scan.cameraActive,
       setCameraActive: scan.setCameraActive,
-      cameraPurpose: scan.cameraPurpose,
-      setCameraPurpose: scan.setCameraPurpose,
       
       videoRef: camera.videoRef,
       canvasRef: camera.canvasRef,
       startCamera: camera.startCamera,
       capturePhoto: camera.capturePhoto,
       stopCamera: camera.stopCamera,
-      handleFileUpload: camera.handleFileUpload,
       
       isCheckoutOpen: basket.isCheckoutOpen,
       setIsCheckoutOpen: basket.setIsCheckoutOpen,
@@ -109,7 +94,6 @@ export function GroceryProvider({ children }: { children: ReactNode }) {
       addNotification: notifications.addNotification,
       clearNotifications: notifications.clearNotifications,
       
-      triggerImageAnalysis: scan.triggerImageAnalysis,
       handleAddToBasket: basket.handleAddToBasket,
       removePhoto: scan.removePhoto,
       updateQuantity: basket.updateQuantity,
