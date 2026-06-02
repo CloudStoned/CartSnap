@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/auth/useAuth';
 import { fetchReceiptsWithItems } from '@/lib/queries/checkout';
 import DailyChart from './DailyChart';
 import CheckoutDetails from './CheckoutDetails';
+import InsightsHeader from './InsightsHeader';
 
 import { ReceiptItem, Receipt, DaySpending } from './types';
 
@@ -200,33 +201,12 @@ export default function InsightsPanel() {
 
   return (
     <div className="space-y-6">
-      {/* 1. Header Summary Card */}
-      <div className="bg-gradient-to-br from-[#0b1c30] to-[#162e4a] text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
-        <div className="absolute right-0 bottom-0 translate-x-6 translate-y-6 opacity-5 pointer-events-none">
-          <BarChart3 className="w-40 h-40" />
-        </div>
-        <div className="flex justify-between items-start">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-[9px] uppercase tracking-widest font-black text-emerald-400">7-Day Spending Roll</span>
-              {isDemo && (
-                <span className="text-[8px] bg-amber-500/20 text-amber-300 font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider">
-                  Sample Data
-                </span>
-              )}
-            </div>
-            <h3 className="text-2xl font-black font-headline tracking-tight">
-              {currency}{weeklyTotal.toFixed(2)}
-            </h3>
-            <p className="text-[10px] text-slate-300">
-              Total grocery checkout expenditure over the last 7 calendar days.
-            </p>
-          </div>
-          <div className="bg-white/10 backdrop-blur-xs p-2 rounded-xl border border-white/5 flex items-center justify-center">
-            <TrendingUp className="w-5 h-5 text-emerald-400" />
-          </div>
-        </div>
-      </div>
+      {/* 1. Header Summary Card (Averages comparison) */}
+      <InsightsHeader 
+        receipts={receipts}
+        currency={currency}
+        isDemo={isDemo}
+      />
 
       {/* 2. Interactive Bar Graph Subcomponent */}
       <DailyChart 

@@ -34,6 +34,7 @@ cartsnap/
 │   ├── PWARegister.tsx       # Registers the PWA service worker on window load
 │   ├── insights/             # Modular dashboard analytics & spending insights
 │   │   ├── InsightsPanel.tsx # Coordinates data retrieval and page layout
+│   │   ├── InsightsHeader.tsx # Displays spending averages across multiple ranges
 │   │   ├── DailyChart.tsx    # Click-interactive vertical bar spending graph
 │   │   ├── CheckoutDetails.tsx # Detailed itemized receipt lists for the selected date
 │   │   ├── types.ts          # Shared TypeScript type definitions for insights
