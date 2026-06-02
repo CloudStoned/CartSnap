@@ -9,7 +9,6 @@ import { useAuth } from '@/hooks/auth/useAuth';
 // General Sub components
 import Header from '@/components/Header';
 import BudgetCard from '@/components/BudgetCard';
-import StatsCard from '@/components/StatsCard';
 import SettingsPanel from '@/components/SettingsPanel';
 import ScanHub from '@/components/ScanHub';
 import BasketPanel from '@/components/BasketPanel';
@@ -46,7 +45,6 @@ function CartSnapAppContent() {
           {/* Left space col (Width 3/12) */}
           <div className="col-span-3 space-y-6">
             <BudgetCard />
-            <StatsCard />
           </div>
 
           {/* Center scan area col (Width 5/12) */}
@@ -77,7 +75,6 @@ function CartSnapAppContent() {
 
           {activeTab === 'account' && (
             <>
-              <StatsCard />
               <SettingsPanel />
               {/* Hardware alerts warnings */}
               <div className="bg-white border border-slate-100 rounded-xl p-3.5 flex items-start gap-2.5 shadow-xs text-left">
