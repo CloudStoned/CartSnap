@@ -3,12 +3,7 @@
 import React from 'react';
 import { Calendar } from 'lucide-react';
 
-interface DaySpending {
-  dateString: string;
-  dayOfWeek: string;
-  dayOfMonth: number;
-  totalSpent: number;
-}
+import { DaySpending } from './types';
 
 interface DailyChartProps {
   dailyData: DaySpending[];

@@ -17,6 +17,7 @@ import CameraOverlay from '@/components/CameraOverlay';
 import SuccessDialog from '@/components/SuccessDialog';
 import NotificationLogs from '@/components/NotificationLogs';
 import InsightsPanel from '@/components/insights';
+import CalendarPanel from '@/components/calendar';
 
 // Mobile Sub components
 import MobileNav from '@/components/mobile/MobileNav';
@@ -74,6 +75,17 @@ function CartSnapAppContent() {
               </button>
               <button
                 type="button"
+                onClick={() => switchTab('calendar')}
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold font-headline transition-all cursor-pointer block border-0 ${
+                  activeTab === 'calendar'
+                    ? 'bg-emerald-50 text-[#006e2f]'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                Spending Calendar
+              </button>
+              <button
+                type="button"
                 onClick={() => switchTab('account')}
                 className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold font-headline transition-all cursor-pointer block border-0 ${
                   activeTab === 'account'
@@ -100,6 +112,10 @@ function CartSnapAppContent() {
             <div className="col-span-9 space-y-6">
               <InsightsPanel />
             </div>
+          ) : activeTab === 'calendar' ? (
+            <div className="col-span-9 space-y-6">
+              <CalendarPanel />
+            </div>
           ) : (
             <div className="col-span-9 space-y-6">
               <SettingsPanel />
@@ -125,6 +141,12 @@ function CartSnapAppContent() {
           {activeTab === 'insights' && (
             <>
               <InsightsPanel />
+            </>
+          )}
+
+          {activeTab === 'calendar' && (
+            <>
+              <CalendarPanel />
             </>
           )}
 

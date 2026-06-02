@@ -8,35 +8,7 @@ import { fetchReceiptsWithItems } from '@/lib/queries/checkout';
 import DailyChart from './DailyChart';
 import CheckoutDetails from './CheckoutDetails';
 
-interface ReceiptItem {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  quantity: number;
-  productImage: string;
-  createdAt: string;
-}
-
-interface Receipt {
-  id: string;
-  receiptRef: string;
-  totalAmount: number;
-  discountAmount: number;
-  finalAmount: number;
-  budgetLimit: number;
-  currency: string;
-  createdAt: string;
-  items: ReceiptItem[];
-}
-
-interface DaySpending {
-  dateString: string;
-  dayOfWeek: string;
-  dayOfMonth: number;
-  totalSpent: number;
-  items: ReceiptItem[];
-}
+import { ReceiptItem, Receipt, DaySpending } from './types';
 
 function getSampleReceipts(currency: '₱' | '$'): Receipt[] {
   const isUSD = currency === '$';

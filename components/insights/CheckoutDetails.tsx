@@ -3,15 +3,7 @@
 import React from 'react';
 import { ShoppingBag, Apple, Droplet, Cookie, Beef } from 'lucide-react';
 
-interface ReceiptItem {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  quantity: number;
-  productImage: string;
-  createdAt: string;
-}
+import { ReceiptItem } from './types';
 
 interface CheckoutDetailsProps {
   selectedDay: {

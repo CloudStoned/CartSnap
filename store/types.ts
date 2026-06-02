@@ -8,7 +8,7 @@ export interface GroceryItem {
   priceImage: string;   // Base64 or Price tag marker
 }
 
-export type TabType = 'home' | 'scan' | 'insights' | 'account';
+export type TabType = 'home' | 'scan' | 'insights' | 'calendar' | 'account';
 export type SoundType = 'beep' | 'success' | 'delete' | 'click';
 
 export interface GroceryContextType {

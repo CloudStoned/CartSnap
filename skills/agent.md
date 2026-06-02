@@ -36,7 +36,11 @@ cartsnap/
 │   │   ├── InsightsPanel.tsx # Coordinates data retrieval and page layout
 │   │   ├── DailyChart.tsx    # Click-interactive vertical bar spending graph
 │   │   ├── CheckoutDetails.tsx # Detailed itemized receipt lists for the selected date
+│   │   ├── types.ts          # Shared TypeScript type definitions for insights
 │   │   └── index.ts          # Exports insights presentation components
+│   ├── calendar/             # Modular interactive calendar view
+│   │   ├── CalendarPanel.tsx # Displays calendar grid with daily spend totals
+│   │   └── index.ts          # Exports calendar components
 │   ├── auth/                 # Auth-related visual components
 │   │   ├── AuthBackground.tsx, AuthCard.tsx, AuthForm.tsx, AuthHeader.tsx, AuthTabs.tsx, AuthAlerts.tsx, AuthSandbox.tsx
 │   │   └── index.ts          # Exports auth presentation components
