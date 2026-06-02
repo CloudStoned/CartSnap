@@ -99,9 +99,19 @@ export default function ScanHub() {
             <div className="relative">
               <span className="absolute left-3.5 top-2.5 text-sm font-semibold text-slate-400">{currency}</span>
               <input 
-                type="number" 
+                type="text" 
+                inputMode="decimal"
+                pattern="[0-9]*\.?[0-9]*"
                 value={scannedPrice}
-                onChange={(e) => setScannedPrice(e.target.value)}
+                onChange={(e) => {
+                  let val = e.target.value;
+                  let cleanVal = val.replace(/[^0-9.]/g, '');
+                  const dotIndex = cleanVal.indexOf('.');
+                  if (dotIndex !== -1) {
+                    cleanVal = cleanVal.slice(0, dotIndex + 1) + cleanVal.slice(dotIndex + 1).replace(/\./g, '');
+                  }
+                  setScannedPrice(cleanVal);
+                }}
                 placeholder="0.00" 
                 className="w-full text-sm bg-[#f8f9ff] text-[#0b1c30] border border-slate-200 pl-8 pr-3.5 py-2.5 rounded-xl outline-hidden focus:ring-2 focus:ring-[#006e2f]/20 font-price font-bold transition-all"
               />
