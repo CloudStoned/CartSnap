@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { SoundType } from '../store/types';
+import { SoundType } from '../../store/types';
 
 export function useGroceryNotifications(playSound: (type: SoundType) => void) {
   const [notifications, setNotifications] = useState<string[]>([
-    "Welcome to CartSnap! Tap any preset to trigger instant AI vision scanning simulations."
+    "Welcome to CartSnap! Scan items locally and offline using PaddleOCR."
   ]);
   const [showNotificationBadge, setShowNotificationBadge] = useState<boolean>(true);
   const [showNotificationsList, setShowNotificationsList] = useState<boolean>(false);

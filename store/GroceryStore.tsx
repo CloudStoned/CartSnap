@@ -5,8 +5,8 @@ import { GroceryContextType } from './types';
 
 // Custom Hooks
 import { useGrocerySettings } from '../hooks/useGrocerySettings';
-import { useGroceryNotifications } from '../hooks/useGroceryNotifications';
-import { useGroceryScan } from '../hooks/useGroceryScan';
+import { useGroceryNotifications } from '../hooks/scan/useGroceryNotifications';
+import { useGroceryScan } from '../hooks/scan';
 import { useGroceryBasket } from '../hooks/useGroceryBasket';
 import { useCamera } from '../hooks/useCamera';
 

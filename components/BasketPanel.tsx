@@ -59,7 +59,7 @@ export default function BasketPanel({ isWidescreen = false }: BasketPanelProps) 
           <div className="space-y-1">
             <h4 className="text-xs font-bold text-slate-800 font-headline">No goods inside basket</h4>
             <p className="text-[10px] text-slate-400 max-w-[220px] mx-auto leading-relaxed">
-              Snap photos with scanning lens triggers above or try preloaded design helper presets.
+              Snap photos with scanning lens triggers above or enter item details manually.
             </p>
           </div>
         </div>

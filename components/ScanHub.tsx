@@ -30,7 +30,7 @@ export default function ScanHub() {
           <Camera className="w-4 h-4 text-[#006e2f]" /> Smart Scanning Hub
         </h3>
         <p className="text-[11px] text-slate-400 leading-relaxed">
-          Align receipts, labels or product shapes. Gemini retrieves OCR price markings using your webcam or photo uploads.
+          Align receipts, labels or product shapes. Local PaddleOCR retrieves OCR price markings entirely offline using your webcam or photo uploads.
         </p>
       </div>
 
@@ -132,8 +132,8 @@ export default function ScanHub() {
           <div className="flex items-center gap-3 bg-emerald-50/50 p-3 rounded-xl border border-emerald-100/50">
             <div className="w-5 h-5 rounded-full border-2 border-[#006e2f] border-t-transparent animate-spin flex-shrink-0" />
             <div className="space-y-0.5 flex-1 min-w-0">
-              <p className="text-[11px] font-bold text-emerald-900 font-headline uppercase tracking-wider animate-pulse">Gemini AI OCR scanning...</p>
-              <p className="text-[9px] text-slate-500 truncate">Converting physical pricing sticker tags into clean text fields.</p>
+              <p className="text-[11px] font-bold text-emerald-900 font-headline uppercase tracking-wider animate-pulse">PaddleOCR offline scanning...</p>
+              <p className="text-[9px] text-slate-500 truncate">Processing images locally on your device with PP-OCRv5.</p>
             </div>
           </div>
         ) : scannedName ? (
