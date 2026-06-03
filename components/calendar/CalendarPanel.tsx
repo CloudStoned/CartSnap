@@ -21,15 +21,17 @@ export default function CalendarPanel() {
 
   const scrollToCurrentMonth = (behavior: ScrollBehavior = 'smooth') => {
     const container = containerRef.current;
-    const currentMonthEl = document.getElementById('current-month');
-    if (container && currentMonthEl) {
-      const containerRect = container.getBoundingClientRect();
-      const elementRect = currentMonthEl.getBoundingClientRect();
-      const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
-      container.scrollTo({
-        top: relativeTop,
-        behavior
-      });
+    if (container) {
+      const currentMonthEl = container.querySelector('[data-current-month="true"]');
+      if (currentMonthEl) {
+        const containerRect = container.getBoundingClientRect();
+        const elementRect = currentMonthEl.getBoundingClientRect();
+        const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
+        container.scrollTo({
+          top: relativeTop,
+          behavior
+        });
+      }
     }
   };
 
@@ -102,7 +104,7 @@ export default function CalendarPanel() {
           return (
             <div 
               key={`${year}-${month}`} 
-              id={isCurrentMonth ? 'current-month' : undefined}
+              data-current-month={isCurrentMonth ? 'true' : undefined}
               className="space-y-4 scroll-mt-2"
             >
               {/* Sticky-like Month Header banner */}
