@@ -18,6 +18,9 @@ export default function InsightsPanel() {
     animationTrigger,
     selectedDay,
     maxSpend,
+    monthOptions,
+    selectedMonth,
+    setSelectedMonth,
     handleBarClick,
   } = useInsights();
 
@@ -47,6 +50,9 @@ export default function InsightsPanel() {
         currency={currency}
         animationTrigger={animationTrigger}
         onBarClick={handleBarClick}
+        monthOptions={monthOptions}
+        selectedMonth={selectedMonth}
+        onMonthChange={setSelectedMonth}
       />
 
       {/* 3. Daily Purchase Breakdown Details Subcomponent */}

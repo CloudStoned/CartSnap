@@ -1,2 +1,3 @@
 export { useInsights } from './useInsights';
-export { calculateDailyData } from './insightsHelper';
+export { getAvailableMonths, calculateMonthDailyData } from './insightsHelper';
+export type { MonthOption } from './insightsHelper';

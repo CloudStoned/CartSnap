@@ -5,10 +5,11 @@ import { useAuth } from '@/hooks/auth/useAuth';
 import { useGroceryStore } from '@/store/GroceryStore';
 import { fetchReceiptsWithItems } from '@/lib/queries/checkout';
 import { Receipt, DaySpending } from '@/components/insights/types';
-import { calculateDailyData } from './insightsHelper';
+import { getAvailableMonths, calculateMonthDailyData, MonthOption } from './insightsHelper';
 
 /**
- * Custom hook to orchestrate loading, animation, and interaction state for insights.
+ * Custom hook to orchestrate insights data, including month selection dropdown
+ * and filtering for only dates with spending.
  */
 export function useInsights() {
   const { session } = useAuth();
@@ -18,6 +19,10 @@ export function useInsights() {
   const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [isDemo, setIsDemo] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  
+  const [monthOptions, setMonthOptions] = useState<MonthOption[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState<string>(''); // "YYYY-MM"
+  
   const [dailyData, setDailyData] = useState<DaySpending[]>([]);
   const [selectedDateString, setSelectedDateString] = useState<string>('');
   const [animationTrigger, setAnimationTrigger] = useState<boolean>(false);
@@ -29,8 +34,19 @@ export function useInsights() {
     setLoading(true);
     fetchReceiptsWithItems(userId)
       .then((data) => {
-        setReceipts((data || []) as Receipt[]);
+        const userReceipts = (data || []) as Receipt[];
+        setReceipts(userReceipts);
         setIsDemo(false);
+        
+        // Determine available months
+        const options = getAvailableMonths(userReceipts);
+        setMonthOptions(options);
+        
+        // Default select the most recent month option
+        if (options.length > 0) {
+          setSelectedMonth(options[0].value);
+        }
+        
         setLoading(false);
       })
       .catch((err) => {
@@ -41,27 +57,40 @@ export function useInsights() {
       });
   }, [userId]);
 
-  // 2. Generate daily data and default selection
+  // 2. Generate daily data when receipts or selectedMonth changes
   useEffect(() => {
-    if (loading) return;
+    if (loading || !selectedMonth) return;
 
-    const mapped = calculateDailyData(receipts);
+    // Reset animation trigger so it plays again on month change
+    setAnimationTrigger(false);
+
+    const mapped = calculateMonthDailyData(receipts, selectedMonth);
     setDailyData(mapped);
 
-    // Default select today
-    const todayStr = new Date().toISOString().split('T')[0];
-    setSelectedDateString(todayStr);
+    // Default select the first active day in this month if available
+    if (mapped.length > 0) {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const hasToday = mapped.some((d) => d.dateString === todayStr);
+      setSelectedDateString(hasToday ? todayStr : mapped[0].dateString);
+    } else {
+      setSelectedDateString('');
+    }
 
     // Trigger visual slide-up animation
     const timer = setTimeout(() => {
       setAnimationTrigger(true);
     }, 100);
     return () => clearTimeout(timer);
-  }, [receipts, loading]);
+  }, [receipts, loading, selectedMonth]);
 
   const handleBarClick = (dateString: string) => {
     playSound('click');
     setSelectedDateString(dateString);
+  };
+
+  const handleMonthChange = (monthValue: string) => {
+    playSound('click');
+    setSelectedMonth(monthValue);
   };
 
   // Find currently selected day
@@ -77,6 +106,9 @@ export function useInsights() {
     receipts,
     isDemo,
     loading,
+    monthOptions,
+    selectedMonth,
+    setSelectedMonth: handleMonthChange,
     dailyData,
     selectedDateString,
     animationTrigger,

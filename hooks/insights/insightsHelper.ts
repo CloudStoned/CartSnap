@@ -1,28 +1,70 @@
 import { Receipt, DaySpending, ReceiptItem } from '@/components/insights/types';
 
+export interface MonthOption {
+  value: string; // "YYYY-MM"
+  label: string; // "May 2026"
+}
+
 /**
- * Calculates daily spending and groups purchased items over the last 7 days.
+ * Extracts unique months (YYYY-MM) from receipts and formats them as MonthOptions,
+ * descending by date (most recent first). Always includes the current month.
  */
-export function calculateDailyData(receipts: Receipt[]): DaySpending[] {
-  const days: Date[] = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    days.push(d);
-  }
+export function getAvailableMonths(receipts: Receipt[]): MonthOption[] {
+  const monthsMap = new Map<string, { year: number; month: number }>();
+  
+  // Always ensure current month is in the options list
+  const now = new Date();
+  const currentKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  monthsMap.set(currentKey, { year: now.getFullYear(), month: now.getMonth() });
 
-  return days.map((day) => {
-    const dayStart = new Date(day);
-    dayStart.setHours(0, 0, 0, 0);
-    const dayEnd = new Date(day);
-    dayEnd.setHours(23, 59, 59, 999);
+  receipts.forEach((r) => {
+    const d = new Date(r.createdAt);
+    if (!isNaN(d.getTime())) {
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      monthsMap.set(key, { year: d.getFullYear(), month: d.getMonth() });
+    }
+  });
 
-    // Find receipts created on this calendar day
-    const dayReceipts = receipts.filter((r) => {
-      const rDate = new Date(r.createdAt);
-      return rDate >= dayStart && rDate <= dayEnd;
+  const sorted = Array.from(monthsMap.entries()).sort((a, b) => {
+    return b[0].localeCompare(a[0]); // Descending (most recent first)
+  });
+
+  return sorted.map(([value, { year, month }]) => {
+    const label = new Date(year, month).toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric'
     });
+    return { value, label };
+  });
+}
 
+/**
+ * Calculates daily spending and groups items specifically for active days (spending > 0)
+ * within the selected month.
+ */
+export function calculateMonthDailyData(receipts: Receipt[], selectedMonth: string): DaySpending[] {
+  const [targetYear, targetMonthStr] = selectedMonth.split('-').map(Number);
+  const targetMonth = targetMonthStr - 1; // 0-indexed for Date constructor
+
+  // Filter receipts for the selected month and year
+  const filteredReceipts = receipts.filter((r) => {
+    const d = new Date(r.createdAt);
+    return d.getFullYear() === targetYear && d.getMonth() === targetMonth;
+  });
+
+  // Group receipts by day of the month
+  const dayGroups = new Map<number, Receipt[]>();
+  filteredReceipts.forEach((r) => {
+    const d = new Date(r.createdAt);
+    const dayOfMonth = d.getDate();
+    const existing = dayGroups.get(dayOfMonth) || [];
+    existing.push(r);
+    dayGroups.set(dayOfMonth, existing);
+  });
+
+  // Convert groups to DaySpending objects
+  const result: DaySpending[] = [];
+  dayGroups.forEach((dayReceipts, dayOfMonth) => {
     const totalSpent = dayReceipts.reduce((sum, r) => sum + r.finalAmount, 0);
 
     // Group and merge items bought on the same day
@@ -40,16 +82,19 @@ export function calculateDailyData(receipts: Receipt[]): DaySpending[] {
       });
     });
 
-    const dayOfWeek = day.toLocaleDateString('en-US', { weekday: 'short' });
-    const dayOfMonth = day.getDate();
-    const dateString = day.toISOString().split('T')[0];
+    const dateObj = new Date(targetYear, targetMonth, dayOfMonth);
+    const dateString = dateObj.toISOString().split('T')[0];
+    const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
 
-    return {
+    result.push({
       dateString,
       dayOfWeek,
       dayOfMonth,
       totalSpent,
       items: mergedItems,
-    };
+    });
   });
+
+  // Sort ascending (chronologically)
+  return result.sort((a, b) => a.dateString.localeCompare(b.dateString));
 }
