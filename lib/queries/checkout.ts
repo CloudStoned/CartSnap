@@ -116,3 +116,103 @@ export async function fetchReceiptsWithItems(userId: string) {
       })),
   }));
 }
+
+/**
+ * Deletes a specific receipt item and updates the parent receipt's totals.
+ * If no items remain in the receipt, deletes the receipt itself.
+ */
+export async function deleteReceiptItem(itemId: string) {
+  // 1. Fetch the item to get receipt_id, price, and quantity
+  const { data: item, error: fetchError } = await supabase
+    .from('receipt_items')
+    .select('receipt_id, price, quantity')
+    .eq('id', itemId)
+    .single();
+
+  if (fetchError || !item) {
+    console.error('Error fetching receipt item for deletion:', fetchError);
+    throw fetchError || new Error('Item not found');
+  }
+
+  const receiptId = item.receipt_id;
+  const itemTotal = Number(item.price) * item.quantity;
+
+  // 2. Delete the item
+  const { error: deleteError } = await supabase
+    .from('receipt_items')
+    .delete()
+    .eq('id', itemId);
+
+  if (deleteError) {
+    console.error('Error deleting receipt item:', deleteError);
+    throw deleteError;
+  }
+
+  // 3. Check if any items remain for this receipt
+  const { data: remainingItems, error: countError } = await supabase
+    .from('receipt_items')
+    .select('id, price, quantity')
+    .eq('receipt_id', receiptId);
+
+  if (countError) {
+    console.error('Error checking remaining receipt items:', countError);
+    throw countError;
+  }
+
+  if (!remainingItems || remainingItems.length === 0) {
+    // No items left, delete the parent receipt
+    const { error: deleteReceiptError } = await supabase
+      .from('receipts')
+      .delete()
+      .eq('id', receiptId);
+
+    if (deleteReceiptError) {
+      console.error('Error deleting empty parent receipt:', deleteReceiptError);
+      throw deleteReceiptError;
+    }
+  } else {
+    // Recalculate totals from remaining items or subtract itemTotal
+    const { data: receipt, error: fetchReceiptError } = await supabase
+      .from('receipts')
+      .select('total_amount, final_amount, discount_amount')
+      .eq('id', receiptId)
+      .single();
+
+    if (fetchReceiptError || !receipt) {
+      console.error('Error fetching parent receipt:', fetchReceiptError);
+      throw fetchReceiptError || new Error('Receipt not found');
+    }
+
+    const oldTotal = Number(receipt.total_amount);
+    const oldFinal = Number(receipt.final_amount);
+    
+    let newTotal = oldTotal - itemTotal;
+    if (newTotal < 0) newTotal = 0;
+    
+    let newFinal = oldFinal;
+    if (oldTotal > 0) {
+      const ratio = oldFinal / oldTotal;
+      newFinal = newTotal * ratio;
+    } else {
+      newFinal = newFinal - itemTotal;
+    }
+    if (newFinal < 0) newFinal = 0;
+    
+    const newDiscount = newTotal - newFinal;
+
+    const { error: updateError } = await supabase
+      .from('receipts')
+      .update({
+        total_amount: newTotal,
+        final_amount: newFinal,
+        discount_amount: newDiscount
+      })
+      .eq('id', receiptId);
+
+    if (updateError) {
+      console.error('Error updating parent receipt totals:', updateError);
+      throw updateError;
+    }
+  }
+}
+

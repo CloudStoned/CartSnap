@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { ShoppingBag, Apple, Droplet, Cookie, Beef } from 'lucide-react';
-
 import { ReceiptItem } from './types';
+import SlidingReceiptItem from './SlidingReceiptItem';
 
 interface CheckoutDetailsProps {
   selectedDay: {
@@ -13,9 +13,10 @@ interface CheckoutDetailsProps {
     items: ReceiptItem[];
   } | undefined;
   currency: string;
+  onRemoveItem: (itemId: string) => Promise<void>;
 }
 
-export default function CheckoutDetails({ selectedDay, currency }: CheckoutDetailsProps) {
+export default function CheckoutDetails({ selectedDay, currency, onRemoveItem }: CheckoutDetailsProps) {
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'Produce':
@@ -50,42 +51,15 @@ export default function CheckoutDetails({ selectedDay, currency }: CheckoutDetai
       </div>
 
       {selectedDay && selectedDay.items.length > 0 ? (
-        <div className="space-y-3 divide-y divide-slate-100 max-h-[300px] overflow-y-auto pr-1">
+        <div className="space-y-1 max-h-[320px] overflow-y-auto pr-1">
           {selectedDay.items.map((item, idx) => (
-            <div 
-              key={item.id || idx} 
-              className={`flex items-center gap-3 justify-between ${idx > 0 ? 'pt-3' : ''}`}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 overflow-hidden relative">
-                  {item.productImage ? (
-                    <img 
-                      src={item.productImage} 
-                      alt={item.name} 
-                      className="w-full h-full object-cover" 
-                    />
-                  ) : (
-                    getCategoryIcon(item.category)
-                  )}
-                </div>
-                <div className="text-left">
-                  <h5 className="text-[11px] font-bold text-[#0b1c30] line-clamp-1">{item.name}</h5>
-                  <span className="inline-flex items-center gap-1 mt-0.5 text-[8px] font-semibold text-slate-400">
-                    {getCategoryIcon(item.category)}
-                    {item.category}
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-right">
-                <span className="block text-[11px] font-bold text-slate-800">
-                  {currency}{(item.price * item.quantity).toFixed(2)}
-                </span>
-                <span className="block text-[8px] font-semibold text-slate-400 mt-0.5">
-                  {item.quantity}x {currency}{item.price.toFixed(2)}
-                </span>
-              </div>
-            </div>
+            <SlidingReceiptItem
+              key={item.id || idx}
+              item={item}
+              currency={currency}
+              onRemove={onRemoveItem}
+              getCategoryIcon={getCategoryIcon}
+            />
           ))}
         </div>
       ) : (

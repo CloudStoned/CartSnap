@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useGroceryStore } from '@/store/GroceryStore';
-import { fetchReceiptsWithItems } from '@/lib/queries/checkout';
+import { fetchReceiptsWithItems, deleteReceiptItem } from '@/lib/queries/checkout';
 import { Receipt, DaySpending } from '@/components/insights/types';
 import { getAvailableMonths, calculateMonthDailyData, MonthOption } from './insightsHelper';
 import { formatLocalDate } from '@/lib/utils';
@@ -24,15 +24,22 @@ export function useInsights() {
   const [monthOptions, setMonthOptions] = useState<MonthOption[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<string>(''); // "YYYY-MM"
   
-  const [dailyData, setDailyData] = useState<DaySpending[]>([]);
   const [selectedDateString, setSelectedDateString] = useState<string>('');
   const [animationTrigger, setAnimationTrigger] = useState<boolean>(false);
+
+  // Derive dailyData from receipts and selectedMonth using useMemo to avoid state cascading and unnecessary updates
+  const dailyData = useMemo(() => {
+    if (!selectedMonth) return [];
+    return calculateMonthDailyData(receipts, selectedMonth);
+  }, [receipts, selectedMonth]);
 
   // 1. Fetch checkout history from Supabase
   useEffect(() => {
     if (!userId) return;
 
-    setLoading(true);
+    Promise.resolve().then(() => {
+      setLoading(true);
+    });
     fetchReceiptsWithItems(userId)
       .then((data) => {
         const userReceipts = (data || []) as Receipt[];
@@ -58,23 +65,33 @@ export function useInsights() {
       });
   }, [userId]);
 
-  // 2. Generate daily data when receipts or selectedMonth changes
+  // 2. Generate daily data selections when receipts or selectedMonth changes
   useEffect(() => {
     if (loading || !selectedMonth) return;
 
     // Reset animation trigger so it plays again on month change
-    setAnimationTrigger(false);
-
-    const mapped = calculateMonthDailyData(receipts, selectedMonth);
-    setDailyData(mapped);
+    Promise.resolve().then(() => {
+      setAnimationTrigger(false);
+    });
 
     // Default select the first active day in this month if available
-    if (mapped.length > 0) {
+    if (dailyData.length > 0) {
       const todayStr = formatLocalDate(new Date());
-      const hasToday = mapped.some((d) => d.dateString === todayStr);
-      setSelectedDateString(hasToday ? todayStr : mapped[0].dateString);
+      const hasToday = dailyData.some((d) => d.dateString === todayStr);
+      
+      // Defer state update to avoid synchronous state transitions inside effect body
+      Promise.resolve().then(() => {
+        setSelectedDateString((prev) => {
+          // Keep previous selection if it's still in the current dailyData, otherwise update
+          const isValid = dailyData.some((d) => d.dateString === prev);
+          if (isValid) return prev;
+          return hasToday ? todayStr : dailyData[0].dateString;
+        });
+      });
     } else {
-      setSelectedDateString('');
+      Promise.resolve().then(() => {
+        setSelectedDateString('');
+      });
     }
 
     // Trigger visual slide-up animation
@@ -82,7 +99,7 @@ export function useInsights() {
       setAnimationTrigger(true);
     }, 100);
     return () => clearTimeout(timer);
-  }, [receipts, loading, selectedMonth]);
+  }, [dailyData, loading, selectedMonth]);
 
   const handleBarClick = (dateString: string) => {
     playSound('click');
@@ -92,6 +109,40 @@ export function useInsights() {
   const handleMonthChange = (monthValue: string) => {
     playSound('click');
     setSelectedMonth(monthValue);
+  };
+
+  const handleRemoveItem = async (itemId: string) => {
+    playSound('delete');
+    try {
+      await deleteReceiptItem(itemId);
+      
+      // Reload receipts to update all analytics calculations
+      if (userId) {
+        setLoading(true);
+        const data = await fetchReceiptsWithItems(userId);
+        const userReceipts = (data || []) as Receipt[];
+        setReceipts(userReceipts);
+        setIsDemo(false);
+
+        // Re-determine available months
+        const options = getAvailableMonths(userReceipts);
+        setMonthOptions(options);
+
+        // Keep selected month if still valid, otherwise default to first available
+        if (options.length > 0) {
+          const stillValid = options.some((opt) => opt.value === selectedMonth);
+          if (!stillValid) {
+            setSelectedMonth(options[0].value);
+          }
+        } else {
+          setSelectedMonth('');
+        }
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error('Failed to remove receipt item:', err);
+      setLoading(false);
+    }
   };
 
   // Find currently selected day
@@ -117,5 +168,6 @@ export function useInsights() {
     maxSpend,
     weeklyTotal,
     handleBarClick,
+    handleRemoveItem,
   };
 }

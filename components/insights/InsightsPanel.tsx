@@ -22,6 +22,7 @@ export default function InsightsPanel() {
     selectedMonth,
     setSelectedMonth,
     handleBarClick,
+    handleRemoveItem,
   } = useInsights();
 
   if (loading) {
@@ -59,6 +60,7 @@ export default function InsightsPanel() {
       <CheckoutDetails 
         selectedDay={selectedDay}
         currency={currency}
+        onRemoveItem={handleRemoveItem}
       />
     </div>
   );
