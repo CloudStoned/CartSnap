@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useAuthForm } from '@/hooks/auth/useAuthForm';
-import { AuthBackground, AuthHeader, AuthTabs, AuthAlerts, AuthForm, AuthSandbox } from '@/components/auth';
+import { AuthBackground, AuthHeader, AuthTabs, AuthAlerts, AuthForm } from '@/components/auth';
 
 export default function AuthCard() {
   const {
@@ -23,7 +23,6 @@ export default function AuthCard() {
     showPassword,
     setShowPassword,
     handleAuth,
-    fillDemoCredentials,
   } = useAuthForm();
 
   return (
@@ -64,8 +63,6 @@ export default function AuthCard() {
           setShowPassword={setShowPassword}
           handleAuth={handleAuth}
         />
-
-        <AuthSandbox fillDemoCredentials={fillDemoCredentials} />
       </motion.div>
     </div>
   );

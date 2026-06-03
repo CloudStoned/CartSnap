@@ -57,10 +57,18 @@ cartsnap/
 │   ├── auth/                 # Hooks for authentication forms and Supabase user state
 │   │   ├── useAuth.ts
 │   │   └── useAuthForm.ts
-│   └── scan/                 # Hooks orchestrating scanning state and logs
-│       ├── useGroceryNotifications.ts
-│       ├── useGroceryScan.ts
-│       └── index.ts          # Exports scanning hooks
+│   ├── scan/                 # Hooks orchestrating scanning state and logs
+│   │   ├── useGroceryNotifications.ts
+│   │   ├── useGroceryScan.ts
+│   │   └── index.ts          # Exports scanning hooks
+│   ├── insights/             # Hooks orchestrating insights calculations and state
+│   │   ├── useInsights.ts
+│   │   ├── insightsHelper.ts
+│   │   └── index.ts          # Exports insights hook and helper
+│   └── calendar/             # Hooks orchestrating calendar calculations and state
+│       ├── useCalendar.ts
+│       ├── calendarHelper.ts
+│       └── index.ts          # Exports calendar hook and helper
 ├── store/                    # Context Provider unifying React hook States
 │   ├── GroceryStore.tsx      # Unifies and exposes state via GroceryProvider / useGroceryStore
 │   └── types.ts              # Core TypeScript interfaces (GroceryItem, GroceryContextType, etc.)

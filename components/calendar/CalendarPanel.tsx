@@ -1,158 +1,19 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useGroceryStore } from '@/store/GroceryStore';
-import { useAuth } from '@/hooks/auth/useAuth';
-import { fetchReceiptsWithItems } from '@/lib/queries/checkout';
-import { Receipt, ReceiptItem } from '@/components/insights/types';
-
-function getSampleReceipts(currency: '₱' | '$'): Receipt[] {
-  const isUSD = currency === '$';
-  const scale = isUSD ? 0.02 : 1.0;
-
-  return [
-    {
-      id: 'sample-1',
-      receiptRef: 'FT-823910',
-      totalAmount: 190.00 * scale,
-      discountAmount: 0.00 * scale,
-      finalAmount: 190.00 * scale,
-      budgetLimit: 1000.00 * scale,
-      currency: currency,
-      createdAt: new Date().toISOString(),
-      items: [
-        { id: 'item-s1', name: 'Fresh Red Apples', category: 'Produce', price: 45.00 * scale, quantity: 2, productImage: '', createdAt: new Date().toISOString() },
-        { id: 'item-s2', name: 'Whole Milk 1L', category: 'Dairy', price: 100.00 * scale, quantity: 1, productImage: '', createdAt: new Date().toISOString() }
-      ]
-    },
-    {
-      id: 'sample-2',
-      receiptRef: 'FT-482910',
-      totalAmount: 260.00 * scale,
-      discountAmount: 30.00 * scale,
-      finalAmount: 230.00 * scale,
-      budgetLimit: 1000.00 * scale,
-      currency: currency,
-      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-      items: [
-        { id: 'item-s3', name: 'Organic Bananas Bunch', category: 'Produce', price: 35.00 * scale, quantity: 3, productImage: '', createdAt: new Date().toISOString() },
-        { id: 'item-s4', name: 'Premium Greek Yogurt', category: 'Dairy', price: 125.00 * scale, quantity: 1, productImage: '', createdAt: new Date().toISOString() }
-      ]
-    },
-    {
-      id: 'sample-3',
-      receiptRef: 'FT-182931',
-      totalAmount: 120.00 * scale,
-      discountAmount: 10.00 * scale,
-      finalAmount: 110.00 * scale,
-      budgetLimit: 1000.00 * scale,
-      currency: currency,
-      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-      items: [
-        { id: 'item-s5', name: 'Artisan Sourdough Loaf', category: 'Bakery', price: 80.00 * scale, quantity: 1, productImage: '', createdAt: new Date().toISOString() },
-        { id: 'item-s6', name: 'Butter Croissants 2x', category: 'Bakery', price: 40.00 * scale, quantity: 1, productImage: '', createdAt: new Date().toISOString() }
-      ]
-    },
-    {
-      id: 'sample-4',
-      receiptRef: 'FT-928172',
-      totalAmount: 480.00 * scale,
-      discountAmount: 30.00 * scale,
-      finalAmount: 450.00 * scale,
-      budgetLimit: 1000.00 * scale,
-      currency: currency,
-      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      items: [
-        { id: 'item-s7', name: 'Premium Angus Ribeye', category: 'Meat', price: 380.00 * scale, quantity: 1, productImage: '', createdAt: new Date().toISOString() },
-        { id: 'item-s8', name: 'Fresh Baby Spinach', category: 'Produce', price: 100.00 * scale, quantity: 1, productImage: '', createdAt: new Date().toISOString() }
-      ]
-    }
-  ];
-}
+import { useCalendar, getDayDetails } from '@/hooks/calendar';
 
 export default function CalendarPanel() {
-  const { currency, playSound } = useGroceryStore();
-  const { session } = useAuth();
-  const userId = session?.user?.id;
-
-  const [receipts, setReceipts] = useState<Receipt[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [selectedDateString, setSelectedDateString] = useState<string>('');
-  const [monthsList, setMonthsList] = useState<Date[]>([]);
-
-  // 1. Generate a range of 8 months: 6 months ago up to 1 month from now
-  useEffect(() => {
-    const list: Date[] = [];
-    for (let i = -6; i <= 1; i++) {
-      const d = new Date();
-      d.setDate(1); // Set to 1st to prevent overflow on months with varying day counts
-      d.setMonth(d.getMonth() + i);
-      list.push(d);
-    }
-    setMonthsList(list);
-  }, []);
-
-  // 2. Load checkout history from Supabase with sample fallback
-  useEffect(() => {
-    if (!userId) return;
-
-    setLoading(true);
-    fetchReceiptsWithItems(userId)
-      .then((data) => {
-        if (!data || data.length === 0) {
-          setReceipts(getSampleReceipts(currency));
-        } else {
-          setReceipts(data as Receipt[]);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load receipts for calendar:', err);
-        setReceipts(getSampleReceipts(currency));
-        setLoading(false);
-      });
-  }, [userId, currency]);
-
-  // Set default selection to today
-  useEffect(() => {
-    const todayStr = new Date().toISOString().split('T')[0];
-    setSelectedDateString(todayStr);
-  }, []);
-
-  // 3. Auto-scroll to the current month inside the scroll container
-  useEffect(() => {
-    if (!loading && monthsList.length > 0) {
-      setTimeout(() => {
-        const currentMonthEl = document.getElementById('current-month');
-        if (currentMonthEl) {
-          currentMonthEl.scrollIntoView({ behavior: 'auto', block: 'start' });
-        }
-      }, 150);
-    }
-  }, [loading, monthsList]);
-
-  const handleDayClick = (dateStr: string) => {
-    playSound('click');
-    setSelectedDateString(dateStr);
-  };
-
-  // Group items by day
-  const getDayDetails = (day: Date) => {
-    const dayStart = new Date(day);
-    dayStart.setHours(0, 0, 0, 0);
-    const dayEnd = new Date(day);
-    dayEnd.setHours(23, 59, 59, 999);
-
-    const dayReceipts = receipts.filter((r) => {
-      const rDate = new Date(r.createdAt);
-      return rDate >= dayStart && rDate <= dayEnd;
-    });
-
-    const totalSpent = dayReceipts.reduce((sum, r) => sum + r.finalAmount, 0);
-
-    return { totalSpent };
-  };
+  const { currency } = useGroceryStore();
+  const {
+    receipts,
+    loading,
+    selectedDateString,
+    monthsList,
+    handleDayClick,
+  } = useCalendar();
 
   const weekdayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -232,7 +93,7 @@ export default function CalendarPanel() {
                   }
 
                   const dateStr = day.toISOString().split('T')[0];
-                  const { totalSpent } = getDayDetails(day);
+                  const { totalSpent } = getDayDetails(day, receipts);
                   const isSelected = dateStr === selectedDateString;
                   const isToday = new Date().toISOString().split('T')[0] === dateStr;
 

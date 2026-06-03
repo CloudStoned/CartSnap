@@ -58,15 +58,6 @@ export function useAuthForm() {
     }
   };
 
-  const fillDemoCredentials = () => {
-    setEmail('demo@cartsnap.io');
-    setPassword('demo123456');
-    if (mode === 'signup') {
-      setFullName('CartSnap Demo User');
-    }
-    setError(null);
-  };
-
   return {
     mode,
     setMode,
@@ -84,6 +75,5 @@ export function useAuthForm() {
     showPassword,
     setShowPassword,
     handleAuth,
-    fillDemoCredentials,
   };
 }
