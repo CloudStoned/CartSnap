@@ -4,9 +4,10 @@ import React from 'react';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useGroceryStore } from '@/store/GroceryStore';
 import { useCalendar, getDayDetails } from '@/hooks/calendar';
+import { formatLocalDate } from '@/lib/utils';
 
 export default function CalendarPanel() {
-  const { currency } = useGroceryStore();
+  const { currency, playSound } = useGroceryStore();
   const {
     receipts,
     loading,
@@ -28,11 +29,26 @@ export default function CalendarPanel() {
 
   return (
     <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-xs text-left">
-      <div className="flex items-center gap-2 mb-6 border-b border-slate-50 pb-3">
-        <CalendarIcon className="w-4 h-4 text-emerald-600" />
-        <h4 className="text-xs font-bold font-headline uppercase tracking-wider text-slate-800">
-          Expenditure Calendar
-        </h4>
+      <div className="flex items-center justify-between mb-6 border-b border-slate-50 pb-3">
+        <div className="flex items-center gap-2">
+          <CalendarIcon className="w-4 h-4 text-emerald-600" />
+          <h4 className="text-xs font-bold font-headline uppercase tracking-wider text-slate-800">
+            Expenditure Calendar
+          </h4>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            playSound('click');
+            const currentMonthEl = document.getElementById('current-month');
+            if (currentMonthEl) {
+              currentMonthEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }}
+          className="text-[10px] font-bold text-emerald-600 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100/50 px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all active:scale-95"
+        >
+          Jump to Today
+        </button>
       </div>
 
       {/* Vertically Scrollable months container */}
@@ -92,10 +108,10 @@ export default function CalendarPanel() {
                     return <div key={`empty-${idx}`} className="aspect-square bg-slate-50/30 rounded-xl" />;
                   }
 
-                  const dateStr = day.toISOString().split('T')[0];
+                  const dateStr = formatLocalDate(day);
                   const { totalSpent } = getDayDetails(day, receipts);
                   const isSelected = dateStr === selectedDateString;
-                  const isToday = new Date().toISOString().split('T')[0] === dateStr;
+                  const isToday = formatLocalDate(new Date()) === dateStr;
 
                   return (
                     <button

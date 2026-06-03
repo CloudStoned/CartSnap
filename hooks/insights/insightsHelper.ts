@@ -1,4 +1,5 @@
 import { Receipt, DaySpending, ReceiptItem } from '@/components/insights/types';
+import { formatLocalDate } from '@/lib/utils';
 
 export interface MonthOption {
   value: string; // "YYYY-MM"
@@ -83,7 +84,7 @@ export function calculateMonthDailyData(receipts: Receipt[], selectedMonth: stri
     });
 
     const dateObj = new Date(targetYear, targetMonth, dayOfMonth);
-    const dateString = dateObj.toISOString().split('T')[0];
+    const dateString = formatLocalDate(dateObj);
     const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
 
     result.push({

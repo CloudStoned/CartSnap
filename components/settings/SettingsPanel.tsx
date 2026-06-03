@@ -196,7 +196,7 @@ export default function SettingsPanel() {
           onClick={handleSignOut}
           className="w-full py-2 bg-red-50 hover:bg-red-100/70 text-red-600 font-bold rounded-xl text-[10px] flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] border-0 cursor-pointer"
         >
-          Sign Out of Account
+          Log Out
         </button>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { useGroceryStore } from '@/store/GroceryStore';
 import { fetchReceiptsWithItems } from '@/lib/queries/checkout';
 import { Receipt } from '@/components/insights/types';
 import { generateMonthsList } from './calendarHelper';
+import { formatLocalDate } from '@/lib/utils';
 
 /**
  * Custom hook to orchestrate loading, scrolling, and day selection state for the calendar.
@@ -44,8 +45,7 @@ export function useCalendar() {
 
   // Set default selection to today
   useEffect(() => {
-    const todayStr = new Date().toISOString().split('T')[0];
-    setSelectedDateString(todayStr);
+    setSelectedDateString(formatLocalDate(new Date()));
   }, []);
 
   // 3. Auto-scroll to the current month inside the scroll container
@@ -54,7 +54,7 @@ export function useCalendar() {
       const timer = setTimeout(() => {
         const currentMonthEl = document.getElementById('current-month');
         if (currentMonthEl) {
-          currentMonthEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+          currentMonthEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, 150);
       return () => clearTimeout(timer);

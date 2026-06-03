@@ -6,6 +6,7 @@ import { useGroceryStore } from '@/store/GroceryStore';
 import { fetchReceiptsWithItems } from '@/lib/queries/checkout';
 import { Receipt, DaySpending } from '@/components/insights/types';
 import { getAvailableMonths, calculateMonthDailyData, MonthOption } from './insightsHelper';
+import { formatLocalDate } from '@/lib/utils';
 
 /**
  * Custom hook to orchestrate insights data, including month selection dropdown
@@ -69,7 +70,7 @@ export function useInsights() {
 
     // Default select the first active day in this month if available
     if (mapped.length > 0) {
-      const todayStr = new Date().toISOString().split('T')[0];
+      const todayStr = formatLocalDate(new Date());
       const hasToday = mapped.some((d) => d.dateString === todayStr);
       setSelectedDateString(hasToday ? todayStr : mapped[0].dateString);
     } else {
