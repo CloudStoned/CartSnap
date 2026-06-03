@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useGroceryStore } from '@/store/GroceryStore';
 import { fetchReceiptsWithItems } from '@/lib/queries/checkout';
@@ -18,19 +18,21 @@ export function useCalendar() {
 
   const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedDateString, setSelectedDateString] = useState<string>('');
-  const [monthsList, setMonthsList] = useState<Date[]>([]);
+  // Default selected date string is today
+  const [selectedDateString, setSelectedDateString] = useState<string>(() => formatLocalDate(new Date()));
 
-  // 1. Generate months list
-  useEffect(() => {
-    setMonthsList(generateMonthsList());
-  }, []);
+  // 1. Generate months list derived from receipts (using useMemo to avoid unnecessary calculations)
+  const monthsList = useMemo(() => generateMonthsList(receipts), [receipts]);
 
   // 2. Load checkout history from Supabase
   useEffect(() => {
     if (!userId) return;
 
-    setLoading(true);
+    // Defer loading state update to avoid synchronous state transitions inside effect body
+    Promise.resolve().then(() => {
+      setLoading(true);
+    });
+
     fetchReceiptsWithItems(userId)
       .then((data) => {
         setReceipts((data || []) as Receipt[]);
@@ -43,23 +45,6 @@ export function useCalendar() {
       });
   }, [userId]);
 
-  // Set default selection to today
-  useEffect(() => {
-    setSelectedDateString(formatLocalDate(new Date()));
-  }, []);
-
-  // 3. Auto-scroll to the current month inside the scroll container
-  useEffect(() => {
-    if (!loading && monthsList.length > 0) {
-      const timer = setTimeout(() => {
-        const currentMonthEl = document.getElementById('current-month');
-        if (currentMonthEl) {
-          currentMonthEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 150);
-      return () => clearTimeout(timer);
-    }
-  }, [loading, monthsList]);
 
   const handleDayClick = (dateStr: string) => {
     playSound('click');

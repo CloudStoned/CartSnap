@@ -1,17 +1,30 @@
 import { Receipt } from '@/components/insights/types';
 
 /**
- * Generates an 8-month list, from 6 months ago up to 1 month from now.
+ * Generates list of months that have receipts data in them, plus the current month.
  */
-export function generateMonthsList(): Date[] {
-  const list: Date[] = [];
-  for (let i = -6; i <= 1; i++) {
-    const d = new Date();
-    d.setDate(1); // Set to 1st to prevent overflow on months with varying day counts
-    d.setMonth(d.getMonth() + i);
-    list.push(d);
-  }
-  return list;
+export function generateMonthsList(receipts: Receipt[]): Date[] {
+  const monthsMap = new Map<string, Date>();
+
+  // Always include the current month
+  const now = new Date();
+  const currentKey = `${now.getFullYear()}-${now.getMonth()}`;
+  const currentMonthDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  monthsMap.set(currentKey, currentMonthDate);
+
+  // Add months from receipts
+  receipts.forEach((r) => {
+    const d = new Date(r.createdAt);
+    if (!isNaN(d.getTime())) {
+      const key = `${d.getFullYear()}-${d.getMonth()}`;
+      if (!monthsMap.has(key)) {
+        monthsMap.set(key, new Date(d.getFullYear(), d.getMonth(), 1));
+      }
+    }
+  });
+
+  // Sort chronologically ascending
+  return Array.from(monthsMap.values()).sort((a, b) => a.getTime() - b.getTime());
 }
 
 /**

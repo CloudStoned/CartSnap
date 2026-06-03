@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useGroceryStore } from '@/store/GroceryStore';
 import { useCalendar, getDayDetails } from '@/hooks/calendar';
 import { formatLocalDate } from '@/lib/utils';
+import { useEffect, useRef } from 'react';
 
 export default function CalendarPanel() {
   const { currency, playSound } = useGroceryStore();
@@ -17,6 +17,30 @@ export default function CalendarPanel() {
   } = useCalendar();
 
   const weekdayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToCurrentMonth = (behavior: ScrollBehavior = 'smooth') => {
+    const container = containerRef.current;
+    const currentMonthEl = document.getElementById('current-month');
+    if (container && currentMonthEl) {
+      const containerRect = container.getBoundingClientRect();
+      const elementRect = currentMonthEl.getBoundingClientRect();
+      const relativeTop = elementRect.top - containerRect.top + container.scrollTop;
+      container.scrollTo({
+        top: relativeTop,
+        behavior
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (!loading && monthsList.length > 0) {
+      const timer = setTimeout(() => {
+        scrollToCurrentMonth('smooth');
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [loading, monthsList]);
 
   if (loading) {
     return (
@@ -40,10 +64,7 @@ export default function CalendarPanel() {
           type="button"
           onClick={() => {
             playSound('click');
-            const currentMonthEl = document.getElementById('current-month');
-            if (currentMonthEl) {
-              currentMonthEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            scrollToCurrentMonth('smooth');
           }}
           className="text-[10px] font-bold text-emerald-600 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100/50 px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all active:scale-95"
         >
@@ -52,7 +73,10 @@ export default function CalendarPanel() {
       </div>
 
       {/* Vertically Scrollable months container */}
-      <div className="space-y-10 overflow-y-auto max-h-[520px] pr-2 scroll-smooth">
+      <div 
+        ref={containerRef}
+        className="space-y-10 overflow-y-auto max-h-[520px] pr-2 scroll-smooth"
+      >
         {monthsList.map((monthDate) => {
           const year = monthDate.getFullYear();
           const month = monthDate.getMonth();
