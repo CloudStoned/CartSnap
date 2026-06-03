@@ -21,7 +21,7 @@ export async function fetchUserSettings(userId: string) {
  */
 export async function upsertUserSettings(
   userId: string,
-  settings: { budget_limit?: number; currency?: string; sound_enabled?: boolean }
+  settings: { budget_limit?: number; currency?: string; sound_enabled?: boolean; custom_departments?: string[] }
 ) {
   const { data, error } = await supabase
     .from('user_settings')

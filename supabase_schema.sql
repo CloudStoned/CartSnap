@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS public.user_settings (
     budget_limit NUMERIC(10, 2) NOT NULL DEFAULT 1000.00,
     currency VARCHAR(3) NOT NULL DEFAULT '₱',
     sound_enabled BOOLEAN NOT NULL DEFAULT true,
+    custom_departments JSONB NOT NULL DEFAULT '[]'::jsonb,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

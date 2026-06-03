@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { TabType, SoundType } from '../../store/types';
 import { useAudio } from '../useAudio';
 import { fetchUserSettings, upsertUserSettings } from '@/lib/queries';
-import { isUniqueCategory, mergeCategories } from './settingsHelper';
+import { useCustomCategories } from './useCustomCategories';
 
 /**
  * Custom hook to orchestrate grocery settings preferences, limits, and custom departments.
@@ -15,7 +15,14 @@ export function useGrocerySettings(userId?: string) {
   const [currency, setCurrencyState] = useState<'₱' | '$'>('₱');
   const [budget, setBudgetState] = useState<number>(1000);
   const [soundEnabled, setSoundEnabledState] = useState<boolean>(true);
-  const [customCategories, setCustomCategoriesState] = useState<string[]>([]);
+
+  // Delegate custom categories concern to useCustomCategories
+  const {
+    categories,
+    customCategories,
+    addCustomCategory,
+    removeCustomCategory,
+  } = useCustomCategories(userId);
 
   // 1. Fetch settings from DB on mount/user change
   useEffect(() => {
@@ -35,47 +42,6 @@ export function useGrocerySettings(userId?: string) {
       console.error('Failed to load user settings:', err);
     });
   }, [userId]);
-
-  // Load custom categories from localStorage
-  useEffect(() => {
-    if (!userId) {
-      setCustomCategoriesState([]);
-      return;
-    }
-    const stored = localStorage.getItem(`freshtrack_custom_categories_${userId}`);
-    if (stored) {
-      try {
-        setCustomCategoriesState(JSON.parse(stored));
-      } catch (err) {
-        console.error('Failed to parse custom categories:', err);
-      }
-    } else {
-      setCustomCategoriesState([]);
-    }
-  }, [userId]);
-
-  const addCustomCategory = (category: string): boolean => {
-    const trimmed = category.trim();
-    if (!isUniqueCategory(trimmed, customCategories)) {
-      return false;
-    }
-    const updated = [...customCategories, trimmed];
-    setCustomCategoriesState(updated);
-    if (userId) {
-      localStorage.setItem(`freshtrack_custom_categories_${userId}`, JSON.stringify(updated));
-    }
-    return true;
-  };
-
-  const removeCustomCategory = (category: string) => {
-    const updated = customCategories.filter(c => c !== category);
-    setCustomCategoriesState(updated);
-    if (userId) {
-      localStorage.setItem(`freshtrack_custom_categories_${userId}`, JSON.stringify(updated));
-    }
-  };
-
-  const categories = mergeCategories(customCategories);
 
   const playSound = (type: SoundType) => {
     playSynthSound(type, soundEnabled);
