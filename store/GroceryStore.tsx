@@ -4,7 +4,7 @@ import React, { createContext, useContext, ReactNode } from 'react';
 import { GroceryContextType } from './types';
 
 // Custom Hooks
-import { useGrocerySettings } from '../hooks/useGrocerySettings';
+import { useGrocerySettings } from '../hooks/settings';
 import { useGroceryNotifications } from '../hooks/scan/useGroceryNotifications';
 import { useGroceryScan } from '../hooks/scan';
 import { useGroceryBasket } from '../hooks/useGroceryBasket';
@@ -61,6 +61,10 @@ export function GroceryProvider({ children }: { children: ReactNode }) {
       soundEnabled: settings.soundEnabled,
       setSoundEnabled: settings.setSoundEnabled,
       playSound: settings.playSound,
+      categories: settings.categories,
+      customCategories: settings.customCategories,
+      addCustomCategory: settings.addCustomCategory,
+      removeCustomCategory: settings.removeCustomCategory,
       
       basket: basket.basket,
       receiptRef: basket.receiptRef,

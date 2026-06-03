@@ -18,7 +18,8 @@ export default function ScanHub() {
     removePhoto,
     handleAddToBasket,
     playSound,
-    startCamera
+    startCamera,
+    categories
   } = useGroceryStore();
 
   return (
@@ -122,7 +123,7 @@ export default function ScanHub() {
           <div className="space-y-1.5">
             <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">Supermarket Department</label>
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none snap-x h-8.5">
-              {["Produce", "Dairy", "Bakery", "Pantry", "Meat", "Other"].map((cat) => (
+              {categories.map((cat) => (
                 <button
                    key={cat}
                    type="button"

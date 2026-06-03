@@ -24,6 +24,10 @@ export interface GroceryContextType {
   soundEnabled: boolean;
   setSoundEnabled: (enabled: boolean) => void;
   playSound: (type: SoundType) => void;
+  categories: string[];
+  customCategories: string[];
+  addCustomCategory: (category: string) => boolean;
+  removeCustomCategory: (category: string) => void;
   
   // Basket State
   basket: GroceryItem[];

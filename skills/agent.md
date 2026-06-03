@@ -24,7 +24,9 @@ cartsnap/
 │   ├── Header.tsx            # Main header containing user balance, budget progress, app branding
 │   ├── ScanHub.tsx           # Scanner screen capturing product photo & handling manual details input
 │   ├── BasketPanel.tsx       # Sidebar basket displaying items list, quantities, and price calculations
-│   ├── SettingsPanel.tsx     # Budget limit configuration, currency switcher, sound toggle
+│   ├── settings/             # Settings-related visual components
+│   │   ├── SettingsPanel.tsx # Budget limit configuration, currency switcher, sound toggle
+│   │   └── index.ts          # Exports settings components
 │   ├── CheckoutModal.tsx     # Summary overlay presenting totals, savings, and final checkout confirmation
 │   ├── SuccessDialog.tsx     # Receipt card showing order confirmation and receipt identifier
 │   ├── CameraOverlay.tsx     # Standard overlay display overlaying video viewport
@@ -51,9 +53,12 @@ cartsnap/
 ├── hooks/                    # Custom React state orchestrators (strictly state orchestration, no heavy logic)
 │   ├── useCamera.ts          # Orchestrates video streaming, canvas layout captures
 │   ├── useGroceryBasket.ts   # Manages item CRUD, budget validation, and calculates dynamic discounts
-│   ├── useGrocerySettings.ts # Orchestrates tab switching, budget values, and currency state
 │   ├── useAudio.ts           # Standard helper playing sound effects
 │   ├── use-mobile.ts         # Hook calculating window boundaries for responsiveness
+│   ├── settings/             # Hooks orchestrating settings preferences and custom categories
+│   │   ├── useGrocerySettings.ts
+│   │   ├── settingsHelper.ts
+│   │   └── index.ts          # Exports settings hook and helper
 │   ├── auth/                 # Hooks for authentication forms and Supabase user state
 │   │   ├── useAuth.ts
 │   │   └── useAuthForm.ts

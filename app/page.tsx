@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/auth/useAuth';
 // General Sub components
 import Header from '@/components/Header';
 import BudgetCard from '@/components/BudgetCard';
-import SettingsPanel from '@/components/SettingsPanel';
+import { SettingsPanel } from '@/components/settings';
 import ScanHub from '@/components/ScanHub';
 import BasketPanel from '@/components/BasketPanel';
 import CheckoutModal from '@/components/CheckoutModal';
